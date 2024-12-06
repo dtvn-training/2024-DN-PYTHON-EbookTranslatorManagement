@@ -1,16 +1,20 @@
 from database.db import db
 from datetime import datetime
 
+
 class Comment(db.Model):
     __tablename__ = 'comment'
 
     comment_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     content = db.Column(db.Text, nullable=False)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.user_id', ondelete='CASCADE'), nullable=False)
-    task_id = db.Column(db.Integer, db.ForeignKey('task.task_id', ondelete='CASCADE'))
+    user_id = db.Column(db.Integer, db.ForeignKey(
+        'user.user_id', ondelete='CASCADE'), nullable=False)
+    task_id = db.Column(db.Integer, db.ForeignKey(
+        'task.task_id', ondelete='CASCADE'))
     status = db.Column(db.Boolean, default=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    updated_at = db.Column(
+        db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     deleted_at = db.Column(db.DateTime)
 
     # Quan hệ với bảng User và Task

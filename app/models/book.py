@@ -1,6 +1,7 @@
 from database.db import db
 from datetime import datetime
 
+
 class Book(db.Model):
     __tablename__ = 'book'
 
@@ -8,7 +9,8 @@ class Book(db.Model):
     book_title = db.Column(db.String(100), nullable=False)
     language = db.Column(db.String(25))
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    updated_at = db.Column(
+        db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     deleted_at = db.Column(db.DateTime)
 
     def __init__(self, book_title, language=None):

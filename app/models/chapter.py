@@ -1,16 +1,20 @@
 from database.db import db
 from datetime import datetime
 
+
 class Chapter(db.Model):
     __tablename__ = 'chapter'
 
     chapter_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    book_id = db.Column(db.Integer, db.ForeignKey('book.book_id', ondelete='CASCADE'), nullable=False)
+    book_id = db.Column(db.Integer, db.ForeignKey(
+        'book.book_id', ondelete='CASCADE'), nullable=False)
     chapter_title = db.Column(db.String(100), nullable=False)
     chapter_content = db.Column(db.Text)
-    chapter_status = db.Column(db.String(50), default='Pending', nullable=False)
+    chapter_status = db.Column(
+        db.String(50), default='Pending', nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    updated_at = db.Column(
+        db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     deleted_at = db.Column(db.DateTime)
 
     # Relationship với bảng Book

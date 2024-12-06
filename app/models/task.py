@@ -1,18 +1,22 @@
 from database.db import db
 from datetime import datetime
 
+
 class Task(db.Model):
     __tablename__ = 'task'
 
     task_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    chapter_id = db.Column(db.Integer, db.ForeignKey('chapter.chapter_id', ondelete='CASCADE'), nullable=False)
+    chapter_id = db.Column(db.Integer, db.ForeignKey(
+        'chapter.chapter_id', ondelete='CASCADE'), nullable=False)
     task_name = db.Column(db.String(100), nullable=False)
     deadline = db.Column(db.DateTime, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.user_id'))
     is_completed = db.Column(db.Boolean, default=False)
-    task_category_id = db.Column(db.Integer, db.ForeignKey('task_category.task_category_id'))
+    task_category_id = db.Column(
+        db.Integer, db.ForeignKey('task_category.task_category_id'))
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    updated_at = db.Column(
+        db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     deleted_at = db.Column(db.DateTime)
 
     # Relationship với bảng Chapter, User và TaskCategory

@@ -1,5 +1,6 @@
 from database.db import db
 
+
 class Profile(db.Model):
     __tablename__ = 'profile'
 

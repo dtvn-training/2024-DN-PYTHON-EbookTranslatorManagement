@@ -1,16 +1,19 @@
 from database.db import db
 from datetime import datetime
 
+
 class User(db.Model):
     __tablename__ = 'user'
 
     user_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     username = db.Column(db.String(100), nullable=False, unique=True)
     user_password = db.Column(db.String(100), nullable=False)
-    profile_id = db.Column(db.Integer, db.ForeignKey('profile.profile_id', ondelete='CASCADE'))
+    profile_id = db.Column(db.Integer, db.ForeignKey(
+        'profile.profile_id', ondelete='CASCADE'))
     role_id = db.Column(db.Integer, db.ForeignKey('role.role_id'))
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    updated_at = db.Column(
+        db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     deleted_at = db.Column(db.DateTime)
 
     # Relationship với bảng Profile và Role

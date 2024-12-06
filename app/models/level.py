@@ -1,5 +1,6 @@
 from database.db import db
 
+
 class Level(db.Model):
     __tablename__ = 'level'
 

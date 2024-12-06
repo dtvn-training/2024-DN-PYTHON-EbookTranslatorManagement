@@ -1,16 +1,20 @@
 from database.db import db
 from datetime import datetime
 
+
 class KPI(db.Model):
     __tablename__ = 'kpi'
 
     kpi_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.user_id', ondelete='CASCADE'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey(
+        'user.user_id', ondelete='CASCADE'), nullable=False)
     task_completed = db.Column(db.Integer, nullable=False, default=0)
     average_score = db.Column(db.Numeric(5, 2), nullable=False, default=0.00)
-    last_updated = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    last_updated = db.Column(
+        db.DateTime, nullable=False, default=datetime.utcnow)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    updated_at = db.Column(
+        db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     deleted_at = db.Column(db.DateTime)
 
     # Quan hệ với bảng User
