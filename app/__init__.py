@@ -9,6 +9,6 @@ def create_app():
     db.init_app(app)
     app.register_blueprint(userController)
     with app.app_context():
-        from .models.level import Level
+        from .models import Level, Task, Chapter, User, TaskCategory, Book, Comment, Content, Notification, Profile, Role, KPI, UserNotification
         db.create_all()
     return app
