@@ -11,6 +11,9 @@ def register_blueprints(app):
     app.register_blueprint(chapters)
     app.register_blueprint(tasks)
 
+def register_blueprints(app):
+    app.register_blueprint(books)
+
 def create_app():
     app = Flask(__name__, static_url_path="/static")
     CORS(app, resources={r'/*': {'origins': '*'}})
