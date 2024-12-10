@@ -2,10 +2,12 @@ from flask import Flask
 from database.db import db
 from utils.secret import db_url
 from app.views import taskCategory, task
+from flask_cors import CORS
 
 
 def create_app():
     app = Flask(__name__)
+    CORS(app, resources={r'/*': {'origins': '*'}})
     app.config['SQLALCHEMY_DATABASE_URI'] = db_url
     db.init_app(app)
     app.register_blueprint(taskCategory)

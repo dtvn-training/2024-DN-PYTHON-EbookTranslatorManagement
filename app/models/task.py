@@ -1,5 +1,6 @@
 from database.db import db
 from datetime import datetime
+from decimal import Decimal
 
 
 class Task(db.Model):
@@ -14,6 +15,7 @@ class Task(db.Model):
     is_completed = db.Column(db.Boolean, default=False)
     task_category_id = db.Column(
         db.Integer, db.ForeignKey('task_category.task_category_id'))
+    salary = db.Column(db.Numeric(10, 2), default=Decimal('0.00'))
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(
         db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
@@ -24,13 +26,14 @@ class Task(db.Model):
     user = db.relationship('User', backref='tasks', lazy=True)
     task_category = db.relationship('TaskCategory', backref='tasks', lazy=True)
 
-    def __init__(self, chapter_id, task_name, deadline, user_id=None, task_category_id=None, is_completed=False):
+    def __init__(self, chapter_id, task_name, deadline, user_id=None, task_category_id=None, is_completed=False, salary=0):
         self.chapter_id = chapter_id
         self.task_name = task_name
         self.deadline = deadline
         self.user_id = user_id
         self.task_category_id = task_category_id
         self.is_completed = is_completed
+        self.salary = salary
 
     def to_dict(self):
         return {
@@ -41,6 +44,7 @@ class Task(db.Model):
             "user_id": self.user_id,
             "is_completed": self.is_completed,
             "task_category_id": self.task_category_id,
+            "salary": self.salary,
             "created_at": self.created_at,
             "updated_at": self.updated_at,
             "deleted_at": self.deleted_at,
