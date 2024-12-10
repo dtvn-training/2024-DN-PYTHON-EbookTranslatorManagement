@@ -1,6 +1,5 @@
 from app.models.task import Task
 from app.models.chapter import Chapter
-from app.models.content import Content
 from app.models.user import User
 from app.models.profile import Profile
 from app.models.book import Book
@@ -21,11 +20,11 @@ def get_tasks(key, deadline, task_category_id):
         Task.is_completed == False
     )
 
-    if deadline is not None:
+    if deadline:
         tasks = tasks.filter(Task.deadline <= deadline)
-    if task_category_id is not None:
+    if task_category_id:
         tasks = tasks.filter(Task.task_category_id == task_category_id)
     tasks = tasks.with_entities(
-        Task.task_id, Task.task_name, Task.deadline, Profile.fullname, Book.book_title, TaskCategory.title)
+        Task.task_id, Chapter.chapter_title, Task.deadline, Profile.fullname, Book.book_title, TaskCategory.title, Book.language)
     tasks = tasks.all()
     return tasks
