@@ -13,6 +13,7 @@ def register_blueprints(app):
 
 def register_blueprints(app):
     app.register_blueprint(books)
+    app.register_blueprint(chapters)
 
 def create_app():
     app = Flask(__name__, static_url_path="/static")
