@@ -23,7 +23,6 @@ def get_tasks(key, deadline, task_category_id):
         Chapter.chapter_title.like(f"%{key}%"),
         Task.is_completed == False
     )
-
     if deadline:
         tasks = tasks.filter(Task.deadline <= deadline)
     if task_category_id:
