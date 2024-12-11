@@ -1,9 +1,5 @@
-from app.models.task import Task
-from app.models.chapter import Chapter
-from app.models.user import User
-from app.models.profile import Profile
-from app.models.book import Book
-from app.models.taskCategory import TaskCategory
+from app.models import TaskCategory, Book, Profile, User, Chapter, Task
+from app.interfaces import Task_Management
 
 
 def get_tasks(key, deadline, task_category_id):
@@ -19,12 +15,12 @@ def get_tasks(key, deadline, task_category_id):
         Chapter.chapter_title.like(f"%{key}%"),
         Task.is_completed == False
     )
-
     if deadline:
         tasks = tasks.filter(Task.deadline <= deadline)
     if task_category_id:
         tasks = tasks.filter(Task.task_category_id == task_category_id)
     tasks = tasks.with_entities(
-        Task.task_id, Chapter.chapter_title, Task.deadline, Profile.fullname, Book.book_title, TaskCategory.title, Book.language)
+        Task.task_id, Chapter.chapter_title, Task.deadline, TaskCategory.title, Book.language,Profile.fullname)
     tasks = tasks.all()
+    tasks = [Task_Management.create(task).to_dict() for task in tasks]
     return tasks
