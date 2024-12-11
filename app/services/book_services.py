@@ -1,4 +1,5 @@
-from app.models import book
+from app.models import Book
 
 def get_all_books():
-    return book.query.all()
+    books = Book.query.all()
+    return books
