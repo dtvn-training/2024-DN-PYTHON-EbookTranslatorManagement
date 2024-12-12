@@ -1,7 +1,8 @@
 from dateutil import parser
-from app.services.task import get_tasks, get_register_tasks_service, register_task
+from app.services.task import get_tasks, get_register_tasks_service, register_task_service
 from flask import request
 from flask_jwt_extended import get_jwt_identity
+from app.interfaces import Response
 
 
 def get_tasks_controllers(key="", deadline=None, task_category_id=None):
@@ -27,7 +28,7 @@ def registe_task_controller(task_id):
     try:
         id = int(task_id)
         user = get_jwt_identity()
-        register = register_task(id, user.user_id)
-        print(register)
-    except:
-        return None
+        register = register_task_service(id, user["user_id"])
+        return register
+    except Exception as e:
+        return Response.create(False, "Fail for registration", None)
