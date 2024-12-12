@@ -11,6 +11,7 @@ def create_app():
     CORS(app, resources={r'/*': {'origins': '*'}})
     app.config['SQLALCHEMY_DATABASE_URI'] = db_url
     app.config["JWT_SECRET_KEY"] = SECRET_KEY_JWT
+    app.config["JWT_VERIFY_SUB"] = False
     jwt = JWTManager(app)
     db.init_app(app)
     app.register_blueprint(taskCategory)

@@ -19,5 +19,7 @@ def register_task():
 @task.route("/register-task/<task_id>", methods=["POST"])
 @jwt_required()
 def register_task_by_id(task_id):
-    registe_task_controller(task_id)
-    return "done"
+    task = registe_task_controller(task_id)
+    if task["success"]:
+        return jsonify(task), 201
+    return jsonify(task), 400
