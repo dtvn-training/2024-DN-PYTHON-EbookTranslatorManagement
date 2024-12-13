@@ -17,7 +17,7 @@ class Content:
 
     @classmethod
     def create(cls, chapter):
-        chapter_dict = Content(chapter[0], chapter[1], chapter[2])
+        chapter_dict = cls(chapter[0], chapter[1], chapter[2])
         return chapter_dict
 
 

@@ -24,7 +24,7 @@ class Task_Management(Task):
 
     @classmethod
     def create(cls, task):
-        task_dict = Task_Management(
+        task_dict = cls(
             task[0], task[1], task[2], task[3], task[4], task[5])
         return task_dict
 
@@ -48,6 +48,6 @@ class Task_Register(Task):
 
     @classmethod
     def create(cls, task):
-        task_dict = Task_Register(
+        task_dict = cls(
             task[0], task[1], task[2], task[3], task[4], task[5], task[6])
         return task_dict

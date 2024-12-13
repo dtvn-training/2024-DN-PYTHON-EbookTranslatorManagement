@@ -29,6 +29,10 @@ def registe_task_controller(task_id):
         id = int(task_id)
         user = get_jwt_identity()
         register = register_task_service(id, user["user_id"])
-        return register
+        if register == 0:
+            return Response.create(False, "Task not found or registered", None)
+        if (register == 2):
+            return Response.create(False, "The number of tasks is enough for your level", None)
+        return Response.create(True, "Task registered successfully", None)
     except Exception as e:
         return Response.create(False, "Fail for registration", None)
