@@ -55,10 +55,13 @@ def get_register_tasks_service(key, type, language):
 
 
 # member register task
+# code 1:success, 0: not found or registered, 2: over limit task
 def register_task_service(task_id, user_id):
+    code = 1
     task = Task.query.get(task_id)
     if not task or task.user_id:
-        return Response.create(False, "Task not found", None)
+        code = 0
+        return code
     user_information = User.query.join(
         Profile, Profile.profile_id == User.profile_id).join(
             Level, Profile.level_id == Level.level_id
@@ -68,10 +71,12 @@ def register_task_service(task_id, user_id):
     current_task_quantity = user_information[0]
     limit_task = user_information[1]
     profile_id = user_information[2]
+    # check the number of task is enough or not
     if current_task_quantity >= limit_task:
-        return Response.create(False, "The number of tasks is enough for your level", None)
+        code = 2
+        return code
     task.user_id = user_id
     profile = Profile.query.get(profile_id)
     profile.task_quantity += 1
     db.session.commit()
-    return Response.create(True, "Task registered successfully", None)
+    return code
