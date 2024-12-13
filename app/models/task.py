@@ -10,7 +10,6 @@ class Task(db.Model):
     task_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     chapter_id = db.Column(db.Integer, db.ForeignKey(
         'chapter.chapter_id', ondelete='CASCADE'), nullable=False)
-    task_name = db.Column(db.String(100))
     deadline = db.Column(db.DateTime, nullable=False)
     salary = db.Column(db.Numeric(10, 2), default=Decimal('0.00'))
     user_id = db.Column(db.Integer, db.ForeignKey('user.user_id'))
@@ -38,7 +37,6 @@ class Task(db.Model):
     def to_dict(self):
         return {
             "task_id": self.task_id,
-            "task_name": self.task_name,
             "chapter_id": self.chapter_id,
             "deadline": self.deadline,
             "salary": self.salary,
