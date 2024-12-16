@@ -11,3 +11,4 @@ from app.models.profile import Profile
 from app.models.role import Role
 from app.models.kpi import KPI
 from app.models.userNotification import UserNotification
+from app.models.language import Language

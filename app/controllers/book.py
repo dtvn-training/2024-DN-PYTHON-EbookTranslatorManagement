@@ -9,10 +9,10 @@ def upload_book_controller():
         title = req_json.get('title')
         language_id = req_json.get('language_id')
         if not title or not language_id:
-            return None
+            return Response.create(False, "The title and language is required", None)
         book = upload_book_service(title, language_id)
         if book:
-            return Response.create(True, "Create book successfully", None)
+            return Response.create(True, "Create book successfully", book)
         return Response.create(False, "Can not create new book", None)
     except:
         return Response.create(False, "Can not create new book", None)
