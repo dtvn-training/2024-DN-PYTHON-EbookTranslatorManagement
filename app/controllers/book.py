@@ -8,6 +8,7 @@ def upload_book_controller():
         req_json = request.get_json()
         title = req_json.get('title')
         language_id = req_json.get('language_id')
+        language_id = int(language_id)
         if not title or not language_id:
             return Response.create(False, "The title and language is required", None)
         book = upload_book_service(title, language_id)

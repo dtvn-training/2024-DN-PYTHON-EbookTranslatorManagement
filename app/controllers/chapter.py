@@ -35,12 +35,14 @@ def upload_chapter_controller():
         content = file.read().decode('utf-8')
         file.seek(0)
         book_id = request.form.get("book_id")
+        book_id = int(book_id)
         chapter_title = request.form.get("chapter_title")
+        chapter_position = int(request.form.get("chapter_position"))
         if not chapter_title or not book_id:
             return Response.create(False, "Upload chapter fail", None)
         file.save(file_path)
         upload_chapter = upload_chapter_service(
-            book_id, chapter_title, new_filename, content)
+            book_id, chapter_title, new_filename, content, chapter_position)
         if upload_chapter:
             return Response.create(True, "Upload chapter successfully", None)
         return Response.create(False, "Upload chapter failed 1")

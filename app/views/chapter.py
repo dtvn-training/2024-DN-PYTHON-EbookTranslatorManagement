@@ -13,6 +13,6 @@ def get_content(chapter_id):
 @chapters.route("/upload", methods=["POST"])
 def upload_chapter():
     chapter = upload_chapter_controller()
-    if chapter["success"]:
+    if chapter["is_success"]:
         return jsonify(chapter), 201
     return jsonify(chapter), 400

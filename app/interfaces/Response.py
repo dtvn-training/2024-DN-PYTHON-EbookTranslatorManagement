@@ -6,7 +6,7 @@ class Response:
 
     def to_dict(self):
         return {
-            "success": self.is_success,
+            "is_success": self.is_success,
             "message": self.message,
             "data": self.data
         }
