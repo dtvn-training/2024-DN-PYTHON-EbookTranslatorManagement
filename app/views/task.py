@@ -20,6 +20,6 @@ def register_task():
 @jwt_required()
 def register_task_by_id(task_id):
     task = registe_task_controller(task_id)
-    if task["success"]:
+    if task["is_success"]:
         return jsonify(task), 201
     return jsonify(task), 400
