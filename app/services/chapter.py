@@ -38,8 +38,6 @@ def upload_chapter_service(book_id, chapter_title, filename, chapter_content, ch
                           chapter_position, chapter_content)
         db.session.add(chapter)
         db.session.commit()
-        return True
-    except Exception as e:
-        print(e)
-        db.session.rollback()
+        return chapter.to_dict()
+    except:
         return False

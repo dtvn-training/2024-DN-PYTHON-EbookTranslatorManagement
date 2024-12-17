@@ -34,17 +34,24 @@ def upload_chapter_controller():
         # lay noi dung file
         content = file.read().decode('utf-8')
         file.seek(0)
-        book_id = request.form.get("book_id")
-        book_id = int(book_id)
+        book_id = str(request.form.get("book_id", ""))
         chapter_title = request.form.get("chapter_title")
-        chapter_position = int(request.form.get("chapter_position"))
+        chapter_position = str(request.form.get("chapter_position", ""))
         if not chapter_title or not book_id:
             return Response.create(False, "Upload chapter fail", None)
+        # kiem tra chapter position co hop le khong
+        if chapter_position and not chapter_position.isdigit():
+            return Response.create(False, "Chapter position must be a number", None)
+        chapter_position = int(chapter_position)
+        # kiem tra book id co hop le khong
+        if not book_id.isdigit():
+            return Response.create(False, "book id must be a number", None)
+        book_id = int(book_id)
         file.save(file_path)
         upload_chapter = upload_chapter_service(
             book_id, chapter_title, new_filename, content, chapter_position)
         if upload_chapter:
-            return Response.create(True, "Upload chapter successfully", None)
-        return Response.create(False, "Upload chapter failed 1")
+            return Response.create(True, "Upload chapter successfully", upload_chapter)
+        return Response.create(False, "Upload chapter failed")
     except Exception as e:
         return Response.create(False, "Upload chapter failed", None)

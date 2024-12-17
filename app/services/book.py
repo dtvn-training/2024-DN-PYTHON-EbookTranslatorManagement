@@ -9,5 +9,4 @@ def upload_book_service(book_title, language_id):
         db.session.commit()
         return book.to_dict()
     except:
-        db.session.rollback()
         return False
