@@ -6,14 +6,14 @@ from utils.secret import UPLOAD_FOLDER
 from datetime import datetime
 from app.services.content import upload_content_service, get_content_service
 from flask_jwt_extended import get_jwt_identity
+from utils.enumTaskCategory import task_category_name
 
 
-def get_content_controller():
+def get_content_controller(task_id):
     try:
-        task_id = request.args.get('task_id', "")
-        if not task_id or not task_id.isdigit():
+        if not task_id or not str(task_id).isdigit():
             return Response.create(False, "Invalid task_id. It must be a valid integer.", None)
-        task_id = int(task_id)
+
         content = get_content_service(task_id)
         if content:
             return Response.create(True, "Success to get content", content)

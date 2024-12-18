@@ -51,3 +51,25 @@ class Task_Register(Task):
         task_dict = cls(
             task[0], task[1], task[2], task[3], task[4], task[5], task[6])
         return task_dict
+
+
+class Task_Content(Task):
+    def __init__(self, task_id, chapter_title, deadline, type, language, content):
+        super().__init__(task_id, chapter_title, deadline, type, language)
+        self.content = content
+
+    def to_dict(self):
+        return {
+            "task_id": self.task_id,
+            "chapter_title": self.chapter_title,
+            "deadline": self.deadline,
+            "type": self.type,
+            "language": self.language,
+            "content": self.content
+        }
+
+    @classmethod
+    def create(cls, task):
+        task_dict = cls(
+            task[0], task[1], task[2], task[3], task[4], task[5]).to_dict()
+        return task_dict

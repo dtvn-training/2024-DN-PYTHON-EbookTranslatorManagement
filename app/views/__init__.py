@@ -5,3 +5,4 @@ from app.views.chapter import chapters
 from app.views.download import downloads
 from app.views.user import users
 from app.views.content import contents
+from app.views.comment import comments
