@@ -10,6 +10,7 @@ def create_task(chapter_id, deadline, salary, task_category_id=1):
             salary=salary,
             task_category_id=task_category_id
         )
+        print(f"Creating Task: chapter_id={chapter_id}, deadline={deadline}, salary={salary}, task_category_id={task_category_id}")
         db.session.add(new_task)
         db.session.commit()
         return new_task
@@ -17,4 +18,5 @@ def create_task(chapter_id, deadline, salary, task_category_id=1):
         db.session.rollback()
         print(f"An error occurred while creating the task: {e}")
         return None
+
 

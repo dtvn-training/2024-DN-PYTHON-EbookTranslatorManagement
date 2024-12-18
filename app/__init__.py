@@ -13,8 +13,13 @@ def register_blueprints(app):
 
 def create_app():
     app = Flask(__name__)
-    # CORS(app, resources={r"/*": {"origins": "*"}})
-    CORS(app)
+    CORS(app, resources={
+    r"/*": {
+        "origins": ["http://localhost:3000"],
+        "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+        "allow_headers": ["Content-Type", "Authorization"],
+    }
+})
     app.config['SQLALCHEMY_DATABASE_URI'] = db_url
     db.init_app(app)
     register_blueprints(app)
