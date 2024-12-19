@@ -25,7 +25,7 @@ class Task(db.Model):
     user = db.relationship('User', backref='tasks', lazy=True)
     task_category = db.relationship('TaskCategory', backref='tasks', lazy=True)
 
-    def __init__(self,chapter_id, deadline,salary,task_category_id):
+    def __init__(self, chapter_id, deadline, salary, task_category_id):
         self.chapter_id = chapter_id
         self.deadline = deadline
         self.salary = salary

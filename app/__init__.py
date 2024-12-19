@@ -13,17 +13,10 @@ def register_blueprints(app):
 
 def create_app():
     app = Flask(__name__)
-    CORS(app, resources={
-    r"/*": {
-        "origins": ["http://localhost:3000"],
-        "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-        "allow_headers": ["Content-Type", "Authorization"],
-    }
-})
+    CORS(app)
     app.config['SQLALCHEMY_DATABASE_URI'] = db_url
     db.init_app(app)
     register_blueprints(app)
-    app.config['CORS_HEADERS'] = 'application/json'
     with app.app_context():
         from .models import Level, Task, Chapter, User, TaskCategory, Book, Comment, Content, Notification, Profile, Role, KPI, UserNotification
         db.create_all()

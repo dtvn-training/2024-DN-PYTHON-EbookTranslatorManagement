@@ -8,8 +8,9 @@ def get_all_chapters():
     return response
 
 def get_chapters_by_book_id(book_id):
-    chapters = get_chapters_by_book_id_services(book_id)
     if not book_id:
         raise ValueError("Book ID must be provided.")
-    response = [chapter.to_dict() for chapter in chapters]
+    else:
+        chapters = get_chapters_by_book_id_services(book_id)
+        response = [chapter.to_dict() for chapter in chapters]
     return response
