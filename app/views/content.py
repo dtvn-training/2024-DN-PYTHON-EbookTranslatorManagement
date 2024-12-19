@@ -14,7 +14,7 @@ def upload_content():
     return jsonify(upload_content), 400
 
 
-@contents.route("/<task_id>")
+@contents.route("/<task_id>", methods=["GET"])
 def get_translations(task_id):
     content = get_content_controller(task_id)
     if content["is_success"]:

@@ -1,23 +1,36 @@
-from app.models import Comment, Task, Profile, User
-from app.interfaces import Comment as CommentInterface
+from app.models import Comment, Task, Profile, User, Role
+from app.interfaces import Comment as CommentInterface, Status
+from database.db import db
 
 
 def get_comments_service(task_id):
-    # code 1: success, code 2: dont find comment, code 3: error
     try:
-        code = 1
-        comments = Comment.query.filter(Task.task_id == task_id).join(
+        comments = Comment.query.filter(Comment.task_id == task_id).join(
             Task, Task.task_id == Comment.task_id
         ).join(
             User, User.user_id == Comment.user_id
         ).join(
             Profile, Profile.profile_id == User.profile_id
-        ).with_entities(Comment.comment_id, Profile.fullname, User.role, Comment.content, Comment.status).all()
+        ).join(
+            Role, User.role_id == Role.role_id
+        ).with_entities(Comment.comment_id, Profile.fullname, Role.name, Comment.content, Comment.status).all()
         comments = [CommentInterface.create(comment) for comment in comments]
         if not comments:
-            code = 2
-            return None, code
-        return comments, code
+            return None, Status.NOTFOUND
+        return comments, Status.SUCCESS
     except:
-        code = 3
-        return None, code
+        return None, Status.ERROR
+
+
+def confirm_comment_service(comment_id, user_id):
+    try:
+        comment = Comment.query.filter(Comment.comment_id == comment_id, Task.user_id == user_id).join(
+            Task, Task.task_id == Comment.task_id
+        ).join(User, User.user_id == Comment.user_id).first()
+        if not comment:
+            return None, Status.NOTFOUND
+        comment.status = True
+        db.session.commit()
+        return comment.to_dict(), Status.SUCCESS
+    except:
+        return False, Status.ERROR

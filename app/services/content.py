@@ -1,6 +1,6 @@
 from app.models import Content, Task, Chapter, TaskCategory
 from database.db import db
-from app.interfaces import Content as ContentInterface
+from app.interfaces import Content as ContentInterface, Status
 
 
 def get_content_service(task_id):
@@ -34,19 +34,15 @@ def get_content_service(task_id):
 
 def upload_content_service(task_id, content, user_id, status=False, filename=None):
     try:
-        # code 1: success, code 2: dont allow to upload, code 3: failure
-        code = 1
         # kiem tra xem member co phai la nguoi nhan task nay khong
         is_allowed = Task.query.filter(
             Task.task_id == task_id, Task.user_id == user_id, Task.can_do == True).count()
         if is_allowed == 0:
-            code = 2
-            return False, code
+            return False, Status.DISALLOW
         content = Content(content, task_id, status, filename)
         db.session.add(content)
         db.session.commit()
-        return content.to_dict(), code
+        return content.to_dict(), Status.SUCCESS
     except:
         db.session.rollback()
-        code = 0
-        return False, code
+        return False, Status.ERROR

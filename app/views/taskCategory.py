@@ -5,6 +5,6 @@ taskCategory = Blueprint("taskCategory", __name__,
                          url_prefix="/api/task-category")
 
 
-@taskCategory.route("/")
+@taskCategory.route("/", methods=["GET"])
 def gets():
     return jsonify(get_task_controller())

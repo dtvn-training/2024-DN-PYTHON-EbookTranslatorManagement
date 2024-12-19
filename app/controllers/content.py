@@ -1,5 +1,5 @@
 from flask import request
-from app.interfaces import Response
+from app.interfaces import Response, Status
 import uuid
 import os
 from utils.secret import UPLOAD_FOLDER
@@ -11,7 +11,9 @@ from utils.enumTaskCategory import task_category_name
 
 def get_content_controller(task_id):
     try:
-        if not task_id or not str(task_id).isdigit():
+        if not task_id:
+            return Response.create(False, "Missing task_id.", None)
+        if not str(task_id).isdigit():
             return Response.create(False, "Invalid task_id. It must be a valid integer.", None)
 
         content = get_content_service(task_id)
@@ -24,12 +26,14 @@ def get_content_controller(task_id):
 
 def upload_content_controller():
     try:
-        task_id = request.form.get('task_id', "")
+        task_id = request.form.get("task_id", "")
         content = request.form.get("content", "")
         status = request.form.get("status", "") == "true"
-        file_content = ''
+        file_content = ""
         user = get_jwt_identity()
-        if not task_id or not task_id.isdigit():
+        if not task_id:
+            return Response.create(False, "Missing task_id.", None)
+        if not task_id.isdigit():
             return Response.create(False, "Invalid task_id. It must be a valid integer.", None)
         task_id = int(task_id)
         # tao ten file de luu
@@ -63,7 +67,7 @@ def upload_content_controller():
             task_id, content, user["user_id"], status, file_name)
         if upload_content:
             return Response.create(True, "Upload successfully", upload_content)
-        if code == 0:
+        if code == Status.ERROR:
             return Response.create(False, "Upload translation failed", None)
         return Response.create(False, "Task not found or you are not authorized to upload translation for this task", None)
     except:
