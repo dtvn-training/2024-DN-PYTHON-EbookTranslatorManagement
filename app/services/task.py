@@ -1,5 +1,5 @@
 from app.models import TaskCategory, Book, Profile, User, Chapter, Task, Language, Level
-from app.interfaces import Task_Management, Task_Register, Response, Task_Content, Status
+from app.interfaces import Task_Management, Task_Register, Response, Task_Content, Status, MyTask
 from database.db import db
 
 
@@ -122,3 +122,24 @@ def get_information_task_service(task_id):
         return task
     except:
         return None
+
+
+def get_my_task_service(user_id):
+    try:
+        tasks = Task.query.filter_by(user_id=user_id).join(
+            Chapter, Chapter.chapter_id == Task.chapter_id
+        ).join(
+            Book, Book.book_id == Chapter.book_id
+        ).join(
+            Language, Language.language_id == Book.language_id
+        ).join(
+            TaskCategory, TaskCategory.task_category_id == Task.task_category_id
+        ).with_entities(
+            Task.task_id, Chapter.chapter_title, Task.deadline, TaskCategory.title, Language.title, Task.salary
+        ).all()
+        tasks = [MyTask.create(task) for task in tasks]
+        if tasks:
+            return tasks, Status.SUCCESS
+        return None, Status.NOTFOUND
+    except:
+        return None, Status.ERROR

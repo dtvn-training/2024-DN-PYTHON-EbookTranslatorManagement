@@ -1,4 +1,4 @@
-from app.controllers.task import get_tasks_controllers, get_register_tasks_controller, registe_task_controller, get_information_task_controller
+from app.controllers.task import get_tasks_controllers, get_register_tasks_controller, registe_task_controller, get_information_task_controller, get_my_task_controller
 from flask import jsonify, Blueprint, request
 from flask_jwt_extended import jwt_required
 
@@ -28,6 +28,15 @@ def register_task_by_id():
 @task.route("/information/<task_id>", methods=["GET"])
 def get_information_tasks(task_id):
     task = get_information_task_controller(task_id)
+    if task["is_success"]:
+        return jsonify(task), 200
+    return jsonify(task), 400
+
+
+@task.route("/my-task", methods=["GET"])
+@jwt_required()
+def get_my_task():
+    task = get_my_task_controller()
     if task["is_success"]:
         return jsonify(task), 200
     return jsonify(task), 400

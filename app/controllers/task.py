@@ -1,5 +1,5 @@
 from dateutil import parser
-from app.services.task import get_tasks, get_register_tasks_service, get_task_content_service, register_task_service, get_information_task_service
+from app.services.task import get_tasks, get_register_tasks_service, get_task_content_service, register_task_service, get_information_task_service, get_my_task_service
 from flask import request
 from flask_jwt_extended import get_jwt_identity
 from app.interfaces import Response, Status
@@ -81,3 +81,14 @@ def get_information_task_controller(task_id):
         return Response.create(False, "Task information not found", None)
     except:
         return Response.create(False, "Fail to get task information", None)
+
+
+def get_my_task_controller():
+    user = get_jwt_identity()
+    user_id = user["user_id"]
+    tasks, code = get_my_task_service(user_id)
+    if tasks:
+        return Response.create(True, "Success to get my tasks", tasks)
+    if code == Status.NOTFOUND:
+        return Response.create(True, "Tasks not found", None)
+    return Response.create(False, "Fail to get my tasks", None)
