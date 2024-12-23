@@ -45,10 +45,11 @@ class Task_Management(Task):
 
 
 class Task_Register(Task):
-    def __init__(self, task_id, chapter_title, deadline, type, language, chapter_id, salary):
+    def __init__(self, task_id, chapter_title, deadline, type, language, chapter_id, salary, book_title):
         super().__init__(task_id, chapter_title, deadline, type, language)
         self.chapter_id = chapter_id
         self.salary = salary
+        self.book_title = book_title
 
     def to_dict(self):
         return {
@@ -58,13 +59,14 @@ class Task_Register(Task):
             "type": self.type,
             "language": self.language,
             "chapter_id": self.chapter_id,
-            "salary": self.salary
+            "salary": self.salary,
+            "book_title": self.book_title
         }
 
     @classmethod
     def create(cls, task):
         task_dict = cls(
-            task[0], task[1], task[2], task[3], task[4], task[5], task[6])
+            task[0], task[1], task[2], task[3], task[4], task[5], task[6], task[7])
         return task_dict
 
 
@@ -110,3 +112,20 @@ class MyTask(Task):
         task_dict = cls(
             task[0], task[1], task[2], task[3], task[4], task[5]).to_dict()
         return task_dict
+
+
+class CountAndRecord():
+    def __init__(self, count, tasks):
+        self.count = count
+        self.tasks = tasks
+
+    def to_dict(self):
+        return {
+            "count": self.count,
+            "tasks": self.tasks
+        }
+
+    @classmethod
+    def create(cls, count, tasks):
+        count_and_record_dict = cls(count, tasks).to_dict()
+        return count_and_record_dict

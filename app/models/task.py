@@ -9,14 +9,12 @@ class Task(db.Model):
     task_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     chapter_id = db.Column(db.Integer, db.ForeignKey(
         'chapter.chapter_id', ondelete='CASCADE'), nullable=False)
-    task_name = db.Column(db.String(100), nullable=False)
     deadline = db.Column(db.DateTime, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.user_id'))
     is_completed = db.Column(db.Boolean, default=False)
     task_category_id = db.Column(
         db.Integer, db.ForeignKey('task_category.task_category_id'))
     salary = db.Column(db.Numeric(10, 2), default=Decimal('0.00'))
-    can_do = db.Column(db.Boolean, default=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(
         db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
@@ -27,27 +25,23 @@ class Task(db.Model):
     user = db.relationship('User', backref='tasks', lazy=True)
     task_category = db.relationship('TaskCategory', backref='tasks', lazy=True)
 
-    def __init__(self, chapter_id, task_name, deadline, user_id=None, task_category_id=None, is_completed=False, salary=0, can_do=False):
+    def __init__(self, chapter_id, deadline, user_id=None, task_category_id=None, is_completed=False, salary=0):
         self.chapter_id = chapter_id
-        self.task_name = task_name
         self.deadline = deadline
         self.user_id = user_id
         self.task_category_id = task_category_id
         self.is_completed = is_completed
         self.salary = salary
-        self.can_do = can_do
 
     def to_dict(self):
         return {
             "task_id": self.task_id,
             "chapter_id": self.chapter_id,
-            "task_name": self.task_name,
             "deadline": self.deadline,
             "user_id": self.user_id,
             "is_completed": self.is_completed,
             "task_category_id": self.task_category_id,
             "salary": self.salary,
-            "can_do": self.can_do,
             "created_at": self.created_at,
             "updated_at": self.updated_at,
             "deleted_at": self.deleted_at,

@@ -1,5 +1,5 @@
 from app.models import TaskCategory, Book, Profile, User, Chapter, Task, Language, Level
-from app.interfaces import Task_Management, Task_Register, Response, Task_Content, Status, MyTask
+from app.interfaces import Task_Management, Task_Register, Response, Task_Content, Status, MyTask, CountAndRecord
 from database.db import db
 
 
@@ -55,7 +55,7 @@ def get_register_tasks_service(key, type, language, current_page, limit):
         ).join(
             TaskCategory, TaskCategory.task_category_id == Task.task_category_id
         ).join(Language, Book.language_id == Language.language_id).filter(
-            Chapter.chapter_title.like(f"%{key}%"),
+            Book.book_title.like(f"%{key}%"),
             Task.is_completed == False,
             Task.user_id == None
         )
@@ -63,15 +63,16 @@ def get_register_tasks_service(key, type, language, current_page, limit):
             tasks = tasks.filter(TaskCategory.task_category_id == type)
         if language:
             tasks = tasks.filter(Book.language_id == language)
+        count_tasks = tasks.count()
         tasks = tasks.with_entities(
-            Task.task_id, Chapter.chapter_title, Task.deadline, TaskCategory.title, Language.title, Chapter.chapter_id, Task.salary)
+            Task.task_id, Chapter.chapter_title, Task.deadline, TaskCategory.title, Language.title, Chapter.chapter_id, Task.salary, Book.book_title)
         tasks = tasks.paginate(
             page=current_page, per_page=limit, error_out=False)
         # tasks = tasks.all()
         tasks = [Task_Register.create(task).to_dict() for task in tasks]
+        tasks = CountAndRecord.create(count_tasks, tasks)
         return tasks
-    except Exception as e:
-        print(e)
+    except:
         return None
 
 

@@ -1,6 +1,9 @@
-from app.models import Content, Task, Chapter, TaskCategory
+from app.models import Content, Task, Chapter, TaskCategory, KPI
 from database.db import db
 from app.interfaces import Content as ContentInterface, Status
+from utils.enumTaskCategory import task_category_name
+from utils.difference_word import difference_word
+from utils.base_salary_multiplier import base_salary_multiplier
 
 
 def get_content_service(task_id):
@@ -36,9 +39,31 @@ def upload_content_service(task_id, content, user_id, status=False, filename=Non
     try:
         # kiem tra xem member co phai la nguoi nhan task nay khong
         is_allowed = Task.query.filter(
-            Task.task_id == task_id, Task.user_id == user_id, Task.can_do == True).count()
+            Task.task_id == task_id, Task.user_id == user_id).count()
         if is_allowed == 0:
             return False, Status.DISALLOW
+        if status:
+            task = Task.query.get(task_id)
+            if not task:
+                return None, Status.NOTFOUND
+            if task.task_category_id != task_category_name["final"]:
+                task.task_category_id = task.task_category_id + 1
+            else:
+                task.is_completed = True
+            task.user_id = None
+            kpi = ""
+            if task.task_category_id == task_category_name["translation"]:
+                kpi = KPI(user_id, task_id, task.salary)
+            else:
+                task_content = Content.query.filter(Content.task_id == task_id).order_by(
+                    Content.created_at.desc()).first()
+                if not task_content:
+                    return None, Status.NOTFOUND
+                task_content = task_content.content
+                diff_count = difference_word(content, task_content)
+                salary = diff_count * base_salary_multiplier
+                kpi = KPI(user_id, task_id, salary)
+            db.session.add(kpi)
         content = Content(content, task_id, status, filename)
         db.session.add(content)
         db.session.commit()
