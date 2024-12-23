@@ -61,7 +61,7 @@ def upload_content_service(task_id, content, user_id, status=False, filename=Non
                     return None, Status.NOTFOUND
                 task_content = task_content.content
                 diff_count = difference_word(content, task_content)
-                #TO-DO
+                #TO-DO: using base_salary_multiplier on dataase
                 salary = diff_count * base_salary_multiplier
                 kpi = KPI(user_id, task_id, salary)
             db.session.add(kpi)
