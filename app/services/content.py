@@ -37,38 +37,59 @@ def get_content_service(task_id):
 
 def upload_content_service(task_id, content, user_id, status=False, filename=None):
     try:
-        # kiem tra xem member co phai la nguoi nhan task nay khong
-        is_allowed = Task.query.filter(
-            Task.task_id == task_id, Task.user_id == user_id).count()
-        if is_allowed == 0:
+        if not is_user_allowed_for_task(task_id, user_id):
             return False, Status.DISALLOW
+
         if status:
-            task = Task.query.get(task_id)
-            if not task:
+            result = update_task_state(task_id, user_id, content)
+            if result is None:
                 return None, Status.NOTFOUND
-            if task.task_category_id != task_category_name["final"]:
-                task.task_category_id = task.task_category_id + 1
-            else:
-                task.is_completed = True
-            task.user_id = None
-            kpi = ""
-            if task.task_category_id == task_category_name["translation"]:
-                kpi = KPI(user_id, task_id, task.salary)
-            else:
-                task_content = Content.query.filter(Content.task_id == task_id).order_by(
-                    Content.created_at.desc()).first()
-                if not task_content:
-                    return None, Status.NOTFOUND
-                task_content = task_content.content
-                diff_count = difference_word(content, task_content)
-                #TO-DO: using base_salary_multiplier on dataase
-                salary = diff_count * base_salary_multiplier
-                kpi = KPI(user_id, task_id, salary)
-            db.session.add(kpi)
-        content = Content(content, task_id, status, filename)
-        db.session.add(content)
+            if result.get('kpi'):
+                db.session.add(result['kpi'])
+        new_content = Content(content, task_id, status, filename)
+        db.session.add(new_content)
         db.session.commit()
-        return content.to_dict(), Status.SUCCESS
-    except:
-        db.session.rollback()
+
+        return new_content.to_dict(), Status.SUCCESS
+
+    except Exception as e:
         return False, Status.ERROR
+
+
+def is_user_allowed_for_task(task_id, user_id):
+    """Check if the user is allowed to upload content for the task."""
+    return Task.query.filter(Task.task_id == task_id, Task.user_id == user_id).count() > 0
+
+
+def update_task_state(task_id, user_id, content):
+    """Update task state based on the task category and create a KPI if necessary."""
+    task = Task.query.get(task_id)
+    if not task:
+        return None
+    kpi = None
+    if task.task_category_id == task_category_name["translation"]:
+        kpi = KPI(user_id, task_id, task.salary)
+    else:
+        task_content = get_latest_task_content(task_id)
+        if not task_content:
+            return None
+        diff_count = difference_word(content, task_content)
+        # TO-DO: using base_salary_multiplier on dataase
+        salary = diff_count * base_salary_multiplier
+        kpi = KPI(user_id, task_id, salary)
+
+    if task.task_category_id != task_category_name["final"]:
+        task.task_category_id += 1
+    else:
+        task.is_completed = True
+
+    task.user_id = None
+    return {"task": task, "kpi": kpi}
+
+
+def get_latest_task_content(task_id):
+    """Retrieve the most recent content for the given task."""
+    content = Content.query.filter(Content.task_id == task_id).order_by(
+        Content.created_at.desc()).first()
+    content = content.to_dict()
+    return content["content"]
