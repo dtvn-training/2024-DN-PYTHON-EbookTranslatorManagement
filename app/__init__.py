@@ -1,7 +1,7 @@
 from flask import Flask
 from database.db import db
 from utils.secret import db_url, SECRET_KEY_JWT
-from app.views import taskCategory, task, language, chapters, downloads, users
+from app.views import taskCategory, task, language, chapters, downloads, users, books
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager
 
@@ -20,6 +20,7 @@ def create_app():
     app.register_blueprint(chapters)
     app.register_blueprint(downloads)
     app.register_blueprint(users)
+    app.register_blueprint(books)
     with app.app_context():
         from .models import Level, Task, Chapter, User, TaskCategory, Book, Comment, Content, Notification, Profile, Role, KPI, UserNotification
         db.create_all()
