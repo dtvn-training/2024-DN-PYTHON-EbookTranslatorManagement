@@ -1,4 +1,4 @@
-from app.services.book import progress_tracking_service
+from app.services.book import progress_tracking_service, progress_tracking_detail_service
 from collections import defaultdict
 from flask import request
 from app.interfaces import Response
@@ -27,6 +27,33 @@ def progress_tracking_controller():
         return Response.create(False, "Failed to get data", None)
     new_progress = group_books_by_id(progresses)
     return Response.create(True, "Get progress tracking successfully", response(new_progress, total_record))
+
+
+def progress_tracking_detail_controller(book_id):
+    if not book_id:
+        return Response.create(False, "Book id is required", None)
+    if not str(book_id).isdigit():
+        return Response.create(False, "Invalid book_id", None)
+    book, detail = progress_tracking_detail_service(book_id)
+    detail = group_chapter_by_id(detail)
+    if detail and book:
+        return Response.create(True, "Get progress tracking detail successfully", response_progress_detail(book, detail))
+    return Response.create(False, "Failed to get data", None)
+
+
+# gop cac record trung chapter_id
+def group_chapter_by_id(data):
+    result = {}
+    for item in data:
+        chapter_id = item["chapter_id"]
+        if not result.get(chapter_id):
+            result[chapter_id] = item
+            continue
+        if not all([item["filename"], result[chapter_id]["filename"]]):
+            continue
+        if result[chapter_id]["created_at"] < item["created_at"]:
+            result[chapter_id] = item
+    return list(result.values())
 
 
 # gop cac record co chung book_id
@@ -58,4 +85,11 @@ def response(progress, total_records):
     return {
         "information": progress,
         "total_records": total_records
+    }
+
+
+def response_progress_detail(book, details):
+    return {
+        "book": book,
+        "details": details
     }

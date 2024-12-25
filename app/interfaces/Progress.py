@@ -45,3 +45,36 @@ class Book:
     def create(cls, book):
         book_dict = cls(book[0], book[1], book[2]).to_dict()
         return book_dict
+
+
+class Progress_Detail:
+    def __init__(self, chapter_id, title, fullname, deadline, is_completed, task_category, filename, created_at, chapter_position):
+        self.chapter_id = chapter_id
+        self.title = title
+        self.fullname = fullname
+        self.deadline = deadline
+        self.is_completed = is_completed
+        self.task_category = task_category
+        self.filename = filename
+        self.created_at = created_at
+        self.chapter_position = chapter_position
+
+    def to_dict(self):
+        return {
+            "chapter_id": self.chapter_id,
+            "title": self.title,
+            "fullname": self.fullname,
+            "deadline": self.deadline,
+            "is_completed": self.is_completed,
+            "task_category": self.task_category,
+            "filename": self.filename,
+            "created_at": self.created_at,
+            "chapter_position": self.chapter_position,
+        }
+
+    @classmethod
+    def create(cls, progress_detail):
+        progress_detail_dict = cls(
+            progress_detail[0], progress_detail[1], progress_detail[2], progress_detail[3],
+            progress_detail[4], progress_detail[5], progress_detail[6], progress_detail[7], progress_detail[8]).to_dict()
+        return progress_detail_dict
