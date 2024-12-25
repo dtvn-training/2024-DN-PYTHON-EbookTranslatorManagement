@@ -12,6 +12,7 @@ class Chapter(db.Model):
     chapter_content = db.Column(db.Text)
     chapter_status = db.Column(
         db.String(50), default='Pending', nullable=False)
+    chapter_position = db.Column(db.Integer, default=1)
     filename = db.Column(db.String(50), nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(
@@ -21,12 +22,13 @@ class Chapter(db.Model):
     # Relationship với bảng Book
     book = db.relationship('Book', backref='chapters', lazy=True)
 
-    def __init__(self, book_id, chapter_title, filename, chapter_content=None, chapter_status='Pending'):
+    def __init__(self, book_id, chapter_title, filename, chapter_position, chapter_content=None, chapter_status='Pending'):
         self.book_id = book_id
         self.chapter_title = chapter_title
         self.chapter_content = chapter_content
         self.chapter_status = chapter_status
         self.filename = filename
+        self.chapter_position = chapter_position
 
     def to_dict(self):
         return {
@@ -36,6 +38,7 @@ class Chapter(db.Model):
             "chapter_content": self.chapter_content,
             "chapter_status": self.chapter_status,
             "filename": self.filename,
+            "chapter_position": self.chapter_position,
             "created_at": self.created_at,
             "updated_at": self.updated_at,
             "deleted_at": self.deleted_at,

@@ -1,5 +1,5 @@
-from app.models import Book, Chapter, Task, Language, TaskCategory
-from app.interfaces import Progress, Book as BookInterface
+from app.models import Book, Chapter, Task, Language, TaskCategory, User, Profile, Content
+from app.interfaces import Progress, Book as BookInterface, Progress_Detail
 
 
 def progress_tracking_service(offset, limit, key, language_id):
@@ -35,3 +35,32 @@ def get_book(offset, limit, key, language_id):
         return [], 0
     progress = [BookInterface.create(item) for item in progress]
     return progress, total_record
+
+
+def progress_tracking_detail_service(book_id):
+    try:
+        book = Book.query.filter(Book.book_id == book_id).join(
+            Language, Language.language_id == Book.language_id).with_entities(
+                Book.book_id,
+                Book.book_title,
+                Language.title
+        ).first()
+        book = BookInterface.create(book)
+
+        progress = Chapter.query.filter(Book.book_id == book_id).join(Book, Book.book_id == Chapter.book_id).join(
+            Task, Chapter.chapter_id == Task.chapter_id, isouter=True
+        ).join(
+            Language, Language.language_id == Book.language_id
+        ).join(
+            TaskCategory, TaskCategory.task_category_id == Task.task_category_id, isouter=True
+        ).join(
+            User, User.user_id == Task.user_id, isouter=True
+        ).join(
+            Profile, Profile.profile_id == User.profile_id, isouter=True
+        ).join(
+            Content, Content.task_id == Task.task_id, isouter=True
+        ).with_entities(Chapter.chapter_id, Chapter.chapter_title, Profile.fullname, Task.deadline, Task.is_completed, TaskCategory.title, Content.filename, Content.created_at, Chapter.chapter_position).all()
+        progress = [Progress_Detail.create(item) for item in progress]
+        return book, progress
+    except:
+        return None
