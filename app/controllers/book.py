@@ -23,7 +23,7 @@ def progress_tracking_controller():
     offset = (current_page - 1)*limit
     progresses, total_record = progress_tracking_service(
         offset, limit, key, language_id)
-    if progresses == None:
+    if progresses is None:
         return Response.create(False, "Failed to get data", None)
     new_progress = group_books_by_id(progresses)
     return Response.create(True, "Get progress tracking successfully", response(new_progress, total_record))
