@@ -3,7 +3,6 @@ from database.db import db
 from app.interfaces import Content as ContentInterface, Status
 from utils.enumTaskCategory import task_category_name
 from utils.difference_word import difference_word
-from utils.base_salary_multiplier import base_salary_multiplier
 
 
 def get_content_service(task_id):
@@ -52,7 +51,7 @@ def upload_content_service(task_id, content, user_id, status=False, filename=Non
 
         return new_content.to_dict(), Status.SUCCESS
 
-    except Exception as e:
+    except:
         return False, Status.ERROR
 
 
@@ -74,11 +73,15 @@ def update_task_state(task_id, user_id, content):
         if not task_content:
             return None
         diff_count = difference_word(content, task_content)
-        # TO-DO: using base_salary_multiplier on dataase
-        salary = diff_count * base_salary_multiplier
+        salary = diff_count * task.base_salary_multiplier
+        latest_kpi = KPI.query.filter(KPI.task_id == task.task_id).order_by(
+            KPI.created_at.desc()).first()
+        latest_kpi.salary = latest_kpi.salary - salary
+        if (latest_kpi.salary < 0):
+            latest_kpi.salary = 0
         kpi = KPI(user_id, task_id, salary)
 
-    if task.task_category_id != task_category_name["final"]:
+    if task.task_category_id != task_category_name["review"]:
         task.task_category_id += 1
     else:
         task.is_completed = True
@@ -89,7 +92,7 @@ def update_task_state(task_id, user_id, content):
 
 def get_latest_task_content(task_id):
     """Retrieve the most recent content for the given task."""
-    content = Content.query.filter(Content.task_id == task_id).order_by(
+    content = Content.query.filter(Content.task_id == task_id, Content.status == True).order_by(
         Content.created_at.desc()).first()
     content = content.to_dict()
     return content["content"]
