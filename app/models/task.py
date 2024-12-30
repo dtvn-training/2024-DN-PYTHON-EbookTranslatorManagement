@@ -16,6 +16,8 @@ class Task(db.Model):
     task_category_id = db.Column(
         db.Integer, db.ForeignKey('task_category.task_category_id'))
     salary = db.Column(db.Numeric(10, 2), default=Decimal('0.00'))
+    base_salary_multiplier = db.Column(
+        db.Numeric(10, 2), default=Decimal('0.00'))
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(
         db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
