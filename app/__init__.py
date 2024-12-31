@@ -15,7 +15,7 @@ def create_app():
     app.config["JWT_VERIFY_SUB"] = False
     os.makedirs(UPLOAD_FOLDER, exist_ok=True)
     app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
-    jwt = JWTManager(app)
+    JWTManager(app)
     db.init_app(app)
     app.register_blueprint(taskCategory)
     app.register_blueprint(task)
