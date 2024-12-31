@@ -31,8 +31,8 @@ def count_uncompleted_task_controllers():
     uncompleted_task = count_uncompleted_task()
     return uncompleted_task
 
-
 def get_dashboard_data():
     data = get_task_summary()
     return data
+
     
