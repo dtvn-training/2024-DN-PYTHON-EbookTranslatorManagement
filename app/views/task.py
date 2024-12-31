@@ -3,7 +3,8 @@ from app.controllers.task import (
     count_completed_task_controllers,
     count_total_task_controllers,
     count_uncompleted_task_controllers,
-    get_task_summary
+    get_task_summary,
+    count_task_by_month_controller
 )
 from flask import jsonify, Blueprint, request
 

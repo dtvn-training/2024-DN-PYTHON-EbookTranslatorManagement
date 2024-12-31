@@ -1,7 +1,8 @@
 from app.models import TaskCategory, Book, Profile, User, Chapter, Task
 from app.interfaces import Task_Management
-from database import db
+from sqlalchemy import func
 import datetime
+
 def get_tasks(key, deadline, task_category_id):
     tasks = Task.query.join(Chapter, Task.chapter_id == Chapter.chapter_id).join(
         User, Task.user_id == User.user_id
@@ -34,6 +35,7 @@ def count_completed_task():
 
 def count_uncompleted_task():
     return Task.query.filter(Task.is_completed == False).count()
+
 
 def get_task_summary():
     total_task = Task.query.count()
