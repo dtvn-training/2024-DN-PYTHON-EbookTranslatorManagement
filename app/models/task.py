@@ -26,13 +26,14 @@ class Task(db.Model):
     user = db.relationship('User', backref='tasks', lazy=True)
     task_category = db.relationship('TaskCategory', backref='tasks', lazy=True)
 
-    def __init__(self, chapter_id, task_name, deadline, user_id=None, task_category_id=None, is_completed=False, salary=0):
+    def __init__(self, chapter_id, deadline, user_id=None, task_category_id=None, is_completed=False, salary=0, base_salary_multiplier=0):
         self.chapter_id = chapter_id
         self.deadline = deadline
         self.salary = salary
         self.task_category_id = task_category_id
         self.is_completed = is_completed
         self.salary = salary
+        self.base_salary_multiplier = base_salary_multiplier
 
     def to_dict(self):
         return {
@@ -45,4 +46,5 @@ class Task(db.Model):
             "created_at": self.created_at,
             "updated_at": self.updated_at,
             "deleted_at": self.deleted_at,
+            "base_salary_multiplier": self.base_salary_multiplier
         }
