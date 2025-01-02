@@ -11,7 +11,7 @@ def get_tasks():
 
 
 # routes for register task
-@task.route("/registe-task")
+@task.route("/registe-task", methods=["GET"])
 def register_task():
     return jsonify(get_register_tasks_controller())
 

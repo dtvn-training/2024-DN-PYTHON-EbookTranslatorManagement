@@ -1,10 +1,11 @@
-from flask_jwt_extended import create_access_token
+from flask_jwt_extended import create_access_token, get_jwt_identity
 from flask import request
 from app.interfaces import Response
 from utils.isValidPassword import is_valid_password
 from utils.hashPassword import hash_password
 from app.services.user import register_service, login_service
 from app.interfaces import Status
+from datetime import timedelta
 
 
 # tu dong tao jwt
@@ -53,3 +54,13 @@ def login_controller():
         return Response.create(False, "Invalid username or password", None)
     except:
         return Response.create(False, "Fail to login", None)
+
+
+def refresh_token_controller():
+    try:
+        user = get_jwt_identity()
+        access_token = create_access_token(
+            identity=user, expires_delta=timedelta(minutes=5))
+        return Response.create(True, "Refresh token successfully", access_token)
+    except:
+        return Response.create(False, "Fail to refresh token", None)

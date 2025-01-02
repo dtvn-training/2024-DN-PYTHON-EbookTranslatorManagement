@@ -32,7 +32,7 @@ def login_service(username, password):
                 identity=user_identity, expires_delta=timedelta(minutes=5))
             refresh_token = create_refresh_token(
                 identity=user_identity, expires_delta=timedelta(days=30))
-            return response_user(username, access_token, refresh_token)
+            return response_user(user_identity, access_token, refresh_token)
         return None
     except:
         return None
@@ -47,9 +47,9 @@ def identity(username, role_id, user_id, profile_id):
     }
 
 
-def response_user(username, access_token, refresh_token):
+def response_user(user, access_token, refresh_token):
     return {
-        "username": username,
+        "user": user,
         "access_token": access_token,
         "refresh_token": refresh_token
     }

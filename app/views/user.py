@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify
-from app.controllers.user import auto_authen_controller, register_controller, login_controller
-from flask_jwt_extended import set_access_cookies, set_refresh_cookies
+from app.controllers.user import auto_authen_controller, register_controller, login_controller, refresh_token_controller
+from flask_jwt_extended import jwt_required
 
 users = Blueprint("users", __name__, url_prefix="/api/user")
 
@@ -25,3 +25,12 @@ def login():
     if login["is_success"]:
         return jsonify(login), 200
     return jsonify(login), 400
+
+
+@users.route("/refresh-token", methods=["POST"])
+@jwt_required(refresh=True)
+def refresh_token():
+    access_token = refresh_token_controller()
+    if access_token["is_success"]:
+        return jsonify(access_token), 200
+    return jsonify(access_token), 400
