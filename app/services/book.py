@@ -1,5 +1,6 @@
 from app.models import Book, Chapter, Task, Language, TaskCategory, User, Profile, Content
-from app.interfaces import Progress, Book as BookInterface, Progress_Detail
+from app.interfaces import Progress, Book as BookInterface, Progress_Detail, Status
+from database.db import db
 
 
 def progress_tracking_service(offset, limit, key, language_id):
@@ -64,3 +65,23 @@ def progress_tracking_detail_service(book_id):
         return book, progress
     except:
         return None
+
+
+def edit_book_service(book_id, book_title, language_id):
+    try:
+        book = Book.query.filter(Book.book_id == book_id).first()
+        if not book:
+            return None, Status.NOTFOUND
+        if book_title:
+            book.book_title = book_title
+        if language_id and str(language_id).isdigit():
+            language_id = int(language_id)
+            is_lanuage_id = Language.query.filter(
+                Language.language_id == language_id).first()
+            if is_lanuage_id:
+                book.language_id = language_id
+        db.session.commit()
+        return book.to_dict(), Status.SUCCESS
+    except:
+        return None, Status.ERROR
+

@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify, send_from_directory
-from app.controllers.chapter import get_content_controller
+from app.controllers.chapter import get_content_controller, edit_chapter_controller
 
 chapters = Blueprint("chapters", __name__, url_prefix="/api/chapter")
 
@@ -8,3 +8,9 @@ chapters = Blueprint("chapters", __name__, url_prefix="/api/chapter")
 def get_content(chapter_id):
     content = get_content_controller(chapter_id)
     return jsonify(content)
+
+
+@chapters.route("/edit/<chapter_id>", methods=["POST"])
+def edit_chapter(chapter_id):
+    chapter = edit_chapter_controller(chapter_id)
+    return jsonify(chapter)

@@ -1,7 +1,7 @@
-from app.services.book import progress_tracking_service, progress_tracking_detail_service
+from app.services.book import progress_tracking_service, progress_tracking_detail_service, edit_book_service
 from collections import defaultdict
 from flask import request
-from app.interfaces import Response
+from app.interfaces import Response, Status
 
 
 def progress_tracking_controller():
@@ -54,6 +54,22 @@ def group_chapter_by_id(data):
         if result[chapter_id]["created_at"] < item["created_at"]:
             result[chapter_id] = item
     return list(result.values())
+
+
+def edit_book_controller(book_id):
+    if not book_id:
+        return Response.create(False, "Book id is required", None)
+    if not str(book_id).isdigit():
+        return Response.create(False, "Invalid book_id", None)
+    res_json = request.get_json()
+    book_title = res_json.get("book_title", "")
+    language_id = res_json.get("language_id", "")
+    book, status = edit_book_service(book_id, book_title, language_id)
+    if book:
+        return Response.create(True, "Edit book successfully", book)
+    if status == Status.NOTFOUND:
+        return Response.create(False, "Book not found", None)
+    return Response.create(False, "Fail to edit book", None)
 
 
 # gop cac record co chung book_id
