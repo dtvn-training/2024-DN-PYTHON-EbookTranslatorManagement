@@ -1,4 +1,4 @@
-from app.services.chapter import get_content_service, edit_chapter_service
+from app.services.chapter import get_content_service, edit_chapter_service, delete_chapter_service
 from flask import request
 from app.interfaces import Status, Response
 from utils.content_file_type import allow_extension
@@ -55,3 +55,16 @@ def get_content(file):
     file.seek(0)
     file.save(file_path)
     return content, new_filename
+
+
+def delete_chapter_controller(chapter_id):
+    if not chapter_id:
+        return Response.create(False, "Chapter_id is required", None)
+    if not str(chapter_id).isdigit():
+        return Response.create(False, "Invalid chapter_id", None)
+    is_success, status = delete_chapter_service(chapter_id)
+    if is_success:
+        return Response.create(True, "Delete chapter success", None)
+    if status == Status.NOTFOUND:
+        return Response.create(False, "Chapter not found", None)
+    return Response.create(False, "Delete chapter failed", None)

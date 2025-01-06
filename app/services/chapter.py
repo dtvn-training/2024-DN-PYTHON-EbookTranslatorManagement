@@ -51,3 +51,16 @@ def edit_chapter_service(chapter_id, chapter_title, chapter_content, filename, c
         return chapter.to_dict(), Status.SUCCESS
     except:
         return None, Status.ERROR
+
+
+def delete_chapter_service(chapter_id):
+    try:
+        chapter = Chapter.query.filter(
+            Chapter.chapter_id == chapter_id).first()
+        if not chapter:
+            return None, Status.NOTFOUND
+        db.session.delete(chapter)
+        db.session.commit()
+        return True, Status.SUCCESS
+    except:
+        return None, Status.ERROR
