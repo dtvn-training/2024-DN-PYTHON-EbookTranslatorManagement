@@ -13,4 +13,6 @@ def get_content(chapter_id):
 @chapters.route("/edit/<chapter_id>", methods=["POST"])
 def edit_chapter(chapter_id):
     chapter = edit_chapter_controller(chapter_id)
-    return jsonify(chapter)
+    if chapter['is_success']:
+        return jsonify(chapter), 200
+    return jsonify(chapter), 400

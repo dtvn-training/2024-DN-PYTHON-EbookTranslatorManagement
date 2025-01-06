@@ -52,8 +52,6 @@ def get_content(file):
         str(uuid.uuid4())[:20]+"."+extension
     file_path = os.path.join(UPLOAD_FOLDER, new_filename)
     content = file.read().decode("utf-8")
-    print(content)
     file.seek(0)
-    # fix save file(van chua luu file duoc)
     file.save(file_path)
     return content, new_filename

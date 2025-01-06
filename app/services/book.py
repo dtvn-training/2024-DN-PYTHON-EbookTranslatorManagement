@@ -1,5 +1,6 @@
 from app.models import Book, Chapter, Task, Language, TaskCategory, User, Profile, Content
-from app.interfaces import Progress, Book as BookInterface, Progress_Detail, Status
+from app.interfaces import Progress, Progress_Detail, Status, GetBook
+from app.interfaces.Progress import Book as BookInterface
 from database.db import db
 
 
@@ -74,14 +75,63 @@ def edit_book_service(book_id, book_title, language_id):
             return None, Status.NOTFOUND
         if book_title:
             book.book_title = book_title
-        if language_id and str(language_id).isdigit():
-            language_id = int(language_id)
+        if language_id:
             is_lanuage_id = Language.query.filter(
                 Language.language_id == language_id).first()
             if is_lanuage_id:
                 book.language_id = language_id
+            else:
+                return None, Status.DISALLOW
         db.session.commit()
         return book.to_dict(), Status.SUCCESS
     except:
         return None, Status.ERROR
 
+
+def get_chapter_ebook_service(book_id):
+    try:
+        books = Book.query.filter(Book.book_id == book_id).join(
+            Language, Language.language_id == Book.language_id
+        ).join(
+            Chapter, Chapter.book_id == Book.book_id, isouter=True
+        ).with_entities(Book.book_id, Language.language_id, Book.book_title, Chapter.chapter_id, Chapter.chapter_title, Chapter.filename).all()
+        books = [GetBook.create(book) for book in books]
+        if not books:
+            return None, Status.NOTFOUND
+        response = group_chapter(books)
+        return response, Status.SUCCESS
+    except:
+        return None, Status.ERROR
+
+
+def book_management_service(offset, limit):
+    try:
+        books = Book.query.join(
+            Language, Language.language_id == Book.language_id
+        ).offset(offset).limit(limit).with_entities(Book.book_id, Book.book_title, Language.title).all()
+        books = [BookInterface.create(book) for book in books]
+        total_record = Book.query.count()
+        return {
+            "book": books,
+            "total_record": total_record,
+        }
+    except Exception as e:
+        print(e)
+        return None
+
+
+def group_chapter(books):
+    chapters = []
+    for book in books:
+        if book["chapter_id"]:
+            chapters.append({
+                "chapter_id": book["chapter_id"],
+                "chapter_title": book["chapter_title"],
+                "chapter_file": book["chapter_file"],
+            })
+    return {
+        "book_id": books[0]["book_id"],
+        "book_title": books[0]["book_title"],
+        "language_id": books[0]["language_id"],
+        "chapters": chapters
+    }
