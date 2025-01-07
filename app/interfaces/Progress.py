@@ -78,3 +78,20 @@ class Progress_Detail:
             progress_detail[0], progress_detail[1], progress_detail[2], progress_detail[3],
             progress_detail[4], progress_detail[5], progress_detail[6], progress_detail[7], progress_detail[8]).to_dict()
         return progress_detail_dict
+
+
+class ChapterProgress:
+    def __init__(self, book_id, count):
+        self.count = count
+        self.book_id = book_id
+
+    def to_dict(self):
+        return {
+            "count": self.count,
+            "book_id": self.book_id,
+        }
+
+    @classmethod
+    def create(cls, chapter):
+        chapter_dict = cls(chapter[0], chapter[1]).to_dict()
+        return chapter_dict
