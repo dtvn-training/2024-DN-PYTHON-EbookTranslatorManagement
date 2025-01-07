@@ -2,7 +2,7 @@ from app.models import Book, Chapter, Task, Language, TaskCategory, User, Profil
 from app.interfaces import Progress, Progress_Detail, Status, GetBook
 from app.interfaces.Progress import Book as BookInterface
 from database.db import db
-from utils.retryDecorator import retry_function_decorator
+from utils.retry_decorator import retry_function_decorator
 
 
 @retry_function_decorator(retries=2, timeout=2)
