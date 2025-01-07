@@ -1,7 +1,8 @@
-from app.models import Chapter
+from app.models import Chapter, Task
 from utils.limitContent import limit_content
-from app.interfaces import Status
+from app.interfaces import Status, Task_Category
 from database.db import db
+from sqlalchemy import or_
 
 
 class Content:
@@ -55,6 +56,16 @@ def edit_chapter_service(chapter_id, chapter_title, chapter_content, filename, c
 
 def delete_chapter_service(chapter_id):
     try:
+        chapter_id = int(chapter_id)
+        is_task = Task.query.filter(
+            Task.chapter_id == chapter_id, or_(Task.is_completed == True, Task.user_id != None, Task.task_category_id != Task_Category.TRANSLATION)).count()
+        # neu task dang o trang thai translation va chua co nguoi nao nhan thi cho phep xoa
+        if is_task > 0:
+            return None, Status.CONFLICT
+        task = Task.query.filter(Task.chapter_id == chapter_id).first()
+        # kiem tra xem co task nao duoc tao tu chapter nay chua
+        if task:
+            db.session.delete(task)
         chapter = Chapter.query.filter(
             Chapter.chapter_id == chapter_id).first()
         if not chapter:
@@ -62,5 +73,5 @@ def delete_chapter_service(chapter_id):
         db.session.delete(chapter)
         db.session.commit()
         return True, Status.SUCCESS
-    except:
+    except Exception:
         return None, Status.ERROR
