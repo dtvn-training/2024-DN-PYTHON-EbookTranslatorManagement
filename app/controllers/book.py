@@ -35,6 +35,8 @@ def progress_tracking_detail_controller(book_id):
     if not str(book_id).isdigit():
         return Response.create(False, "Invalid book_id", None)
     book, detail = progress_tracking_detail_service(book_id)
+    if detail == Status.ERROR:
+        return Response.create(False, "Failed to get data", None)
     detail = group_chapter_by_id(detail)
     if detail and book:
         return Response.create(True, "Get progress tracking detail successfully", response_progress_detail(book, detail))
@@ -88,9 +90,11 @@ def book_management_controller():
     if limit <= 0 or page <= 0:
         return Response.create(False, "Invalid limit or page", None)
     offset = (int(page) - 1) * limit
-    books = book_management_service(offset, limit)
+    books, status = book_management_service(offset, limit)
     if books:
         return Response.create(True, "Get book management successfully", books)
+    if status == Status.NOTFOUND:
+        return Response.create(False, "Book not found", None)
     return Response.create(False, "Failed to get data", None)
 
 
