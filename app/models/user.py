@@ -10,7 +10,12 @@ class User(db.Model):
     user_password = db.Column(db.String(100), nullable=False)
     profile_id = db.Column(db.Integer, db.ForeignKey(
         'profile.profile_id', ondelete='CASCADE'))
-    role_id = db.Column(db.Integer, db.ForeignKey('role.role_id'))
+    role_id = db.Column(
+        db.Integer,
+        db.ForeignKey('role.role_id'),
+        nullable=False,
+        default=3
+    )
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(
         db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)

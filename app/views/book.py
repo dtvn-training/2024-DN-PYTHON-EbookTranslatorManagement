@@ -1,10 +1,14 @@
 from flask import Blueprint, jsonify
 from app.controllers.book import progress_tracking_controller, progress_tracking_detail_controller
+from flask_jwt_extended import jwt_required
+from app.middlewares.authortization import role_required
+from app.interfaces import Role
 
 books = Blueprint("books", __name__, url_prefix="/api/ebook")
 
 
 @books.route("/progress-tracking", methods=["GET"])
+@role_required([Role.ADMIN])
 def progress_tracking():
     progress_tracking = progress_tracking_controller()
     if progress_tracking["is_success"]:
@@ -13,6 +17,7 @@ def progress_tracking():
 
 
 @books.route("/progress-tracking-detail/<book_id>", methods=["GET"])
+@role_required([Role.ADMIN])
 def progress_tracking_detail(book_id):
     detail = progress_tracking_detail_controller(book_id)
     if detail["is_success"]:
