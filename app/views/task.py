@@ -1,10 +1,7 @@
 from app.controllers.task import (
     get_tasks_controllers,
-    count_completed_task_controllers,
-    count_total_task_controllers,
-    count_uncompleted_task_controllers,
-    get_task_summary,
-    count_task_by_month_controller
+    get_task_summary_controllers,
+    get_tasks_to_table_controllers
 )
 from flask import jsonify, Blueprint, request
 
@@ -15,19 +12,12 @@ task = Blueprint('task', __name__, url_prefix="/api/task")
 def get_tasks_view():
     return jsonify(get_tasks_controllers())
 
-@task.route("/completed-task")
-def count_completed_task_view():
-    return jsonify(count_completed_task_controllers())
-
-@task.route("/uncompleted-task")
-def count_uncompleted_task_view():
-    return jsonify(count_uncompleted_task_controllers())
-
-@task.route("/total-task")
-def count_total_task_view():
-    return jsonify(count_total_task_controllers())
-
 @task.route("/dashboard")
 def get_data_to_dashboard():
-    data_dict = get_task_summary()
+    data_dict = get_task_summary_controllers()
     return jsonify(data_dict)
+
+@task.route("/table_tasks")
+def get_table_tasks():
+    print(get_tasks_to_table_controllers)
+    return get_tasks_to_table_controllers()
