@@ -8,16 +8,16 @@ class Task:
 
 
 class Task_Management(Task):
-    def __init__(self, task_id, chapter_title, deadline, type, language, full_name):
+    def __init__(self, task_id, chapter_title, deadline, type, language, author):
         super().__init__(task_id, chapter_title, deadline, type, language)
-        self.full_name = full_name
+        self.author = author
 
     def to_dict(self):
         return {
             "task_id": self.task_id,
             "chapter_title": self.chapter_title,
             "deadline": self.deadline,
-            "Task Owner": self.full_name,
+            "author": self.author,
             "type": self.type,
             "language": self.language
         }
