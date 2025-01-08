@@ -13,10 +13,13 @@ class Book(db.Model):
     updated_at = db.Column(
         db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     deleted_at = db.Column(db.DateTime)
+
     def __init__(self, book_title, language_id):
         self.book_title = book_title
         self.language = language_id
+
     language = db.relationship('Language', backref='books', lazy=True)
+
     def to_dict(self):
         return {
             "book_id": self.book_id,
