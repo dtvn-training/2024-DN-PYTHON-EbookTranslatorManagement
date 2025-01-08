@@ -7,16 +7,16 @@ class Book(db.Model):
 
     book_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     book_title = db.Column(db.String(100), nullable=False)
-    language_id = db.Column(db.Integer)
+    language_id = db.Column(db.Integer, db.ForeignKey(
+        'language.language_id', ondelete='CASCADE'), nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(
         db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     deleted_at = db.Column(db.DateTime)
-
-    def __init__(self, book_title, language_id=None):
+    def __init__(self, book_title, language_id):
         self.book_title = book_title
-        self.language_id = language_id
-
+        self.language = language_id
+    language = db.relationship('Language', backref='books', lazy=True)
     def to_dict(self):
         return {
             "book_id": self.book_id,
