@@ -4,6 +4,7 @@ from flask_jwt_extended import jwt_required
 
 task = Blueprint('task', __name__, url_prefix="/api/task")
 
+
 @task.route("/")
 def get_tasks():
     return jsonify(get_tasks_controllers())
