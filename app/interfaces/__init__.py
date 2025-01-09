@@ -3,3 +3,4 @@ from .Response import Response
 from .Content import Content
 from .Comment import Comment
 from .Status import Status
+from .Progress import Progress, Book, Progress_Detail
