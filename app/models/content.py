@@ -10,6 +10,7 @@ class Content(db.Model):
     task_id = db.Column(db.Integer, db.ForeignKey(
         'task.task_id', ondelete='CASCADE'), nullable=False)
     status = db.Column(db.Boolean, nullable=False)
+    filename = db.Column(db.String, default=None)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(
         db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
@@ -18,10 +19,11 @@ class Content(db.Model):
     # Quan hệ với bảng Task
     task = db.relationship('Task', backref='contents', lazy=True)
 
-    def __init__(self, content, task_id, status):
+    def __init__(self, content, task_id, status, filename=None):
         self.content = content
         self.task_id = task_id
         self.status = status
+        self.filename = filename
 
     def to_dict(self):
         return {
@@ -29,6 +31,7 @@ class Content(db.Model):
             "content": self.content,
             "task_id": self.task_id,
             "status": self.status,
+            "filename": self.filename,
             "created_at": self.created_at,
             "updated_at": self.updated_at,
             "deleted_at": self.deleted_at,
