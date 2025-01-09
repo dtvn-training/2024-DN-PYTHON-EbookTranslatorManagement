@@ -1,7 +1,7 @@
-from app.services.book import progress_tracking_service, progress_tracking_detail_service
+from app.services.book import progress_tracking_service, progress_tracking_detail_service, edit_book_service, get_chapter_ebook_service, book_management_service
 from collections import defaultdict
 from flask import request
-from app.interfaces import Response
+from app.interfaces import Response, Status
 
 
 def progress_tracking_controller():
@@ -35,9 +35,66 @@ def progress_tracking_detail_controller(book_id):
     if not str(book_id).isdigit():
         return Response.create(False, "Invalid book_id", None)
     book, detail = progress_tracking_detail_service(book_id)
+    if detail == Status.ERROR:
+        return Response.create(False, "Failed to get data", None)
     detail = group_chapter_by_id(detail)
     if detail and book:
         return Response.create(True, "Get progress tracking detail successfully", response_progress_detail(book, detail))
+    return Response.create(False, "Failed to get data", None)
+
+
+def edit_book_controller(book_id):
+    if not book_id:
+        return Response.create(False, "Book id is required", None)
+    if not str(book_id).isdigit():
+        return Response.create(False, "Invalid book_id", None)
+    res_json = request.get_json()
+    book_title = res_json.get("book_title", "")
+    language_id = res_json.get("language_id", "")
+    if language_id and not str(language_id).isdigit():
+        return Response.create(False, "Invalid language_id", None)
+    else:
+        language_id = int(language_id)
+    book, status = edit_book_service(book_id, book_title, language_id)
+    if book:
+        return Response.create(True, "Edit book successfully", book)
+    if status == Status.NOTFOUND:
+        return Response.create(False, "Book not found", None)
+    if status == Status.DISALLOW:
+        return Response.create(False, "Not found language id", None)
+    return Response.create(False, "Fail to edit book", None)
+
+
+def get_chapter_ebook_controller(book_id):
+    if not book_id:
+        return Response.create(False, "Book id is required", None)
+    if not str(book_id).isdigit():
+        return Response.create(False, "Invalid book_id", None)
+    books, status = get_chapter_ebook_service(book_id)
+    if books:
+        return Response.create(True, "Get chapter ebook successfully", books)
+    if status == Status.NOTFOUND:
+        return Response.create(False, "Book not found", None)
+    return Response.create(False, "Failed to get data", None)
+
+
+def book_management_controller():
+    limit = request.args.get("limit", 10)
+    page = request.args.get("page", 1)
+    if not str(limit).isdigit():
+        return Response.create(False, "Invalid limit", None)
+    if not str(page).isdigit():
+        return Response.create(False, "Invalid page", None)
+    limit = int(limit)
+    page = int(page)
+    if limit <= 0 or page <= 0:
+        return Response.create(False, "Invalid limit or page", None)
+    offset = (int(page) - 1) * limit
+    books, status = book_management_service(offset, limit)
+    if books:
+        return Response.create(True, "Get book management successfully", books)
+    if status == Status.NOTFOUND:
+        return Response.create(False, "Book not found", None)
     return Response.create(False, "Failed to get data", None)
 
 
