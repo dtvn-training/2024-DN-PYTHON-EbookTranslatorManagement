@@ -14,9 +14,9 @@ class Book(db.Model):
         db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     deleted_at = db.Column(db.DateTime)
 
-    def __init__(self, book_title, language_id):
+    def __init__(self, book_title, language_id=None):
         self.book_title = book_title
-        self.language = language_id
+        self.language_id = language_id
 
     language = db.relationship('Language', backref='books', lazy=True)
 

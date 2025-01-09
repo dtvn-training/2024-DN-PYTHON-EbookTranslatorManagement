@@ -1,4 +1,5 @@
 from app.models import Chapter
+from database.db import db
 from utils.limitContent import limit_content
 
 
@@ -29,3 +30,14 @@ def get_content_service(chapter_id):
     ).first()
     content = Content.create(content).to_dict()
     return content
+
+
+def upload_chapter_service(book_id, chapter_title, filename, chapter_content, chapter_position):
+    try:
+        chapter = Chapter(book_id, chapter_title, filename,
+                          chapter_position, chapter_content)
+        db.session.add(chapter)
+        db.session.commit()
+        return chapter.to_dict()
+    except:
+        return False

@@ -1,5 +1,16 @@
+from database.db import db
 from app.models import Book, Chapter, Task, Language, TaskCategory, User, Profile, Content
 from app.interfaces import Progress, Book as BookInterface, Progress_Detail
+
+
+def upload_book_service(book_title, language_id):
+    try:
+        book = Book(book_title, language_id)
+        db.session.add(book)
+        db.session.commit()
+        return book.to_dict()
+    except:
+        return False
 
 
 def progress_tracking_service(offset, limit, key, language_id):

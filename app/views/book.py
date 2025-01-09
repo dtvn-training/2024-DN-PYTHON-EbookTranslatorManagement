@@ -1,7 +1,15 @@
 from flask import Blueprint, jsonify
-from app.controllers.book import progress_tracking_controller, progress_tracking_detail_controller
+from app.controllers.book import progress_tracking_controller, progress_tracking_detail_controller, upload_book_controller
 
 books = Blueprint("books", __name__, url_prefix="/api/ebook")
+
+
+@books.route("/upload", methods=["POST"])
+def upload_ebook():
+    response = upload_book_controller()
+    if response["is_success"]:
+        return jsonify(response), 201
+    return jsonify(response), 400
 
 
 @books.route("/progress-tracking", methods=["GET"])
