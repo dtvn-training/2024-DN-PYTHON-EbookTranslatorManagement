@@ -2,7 +2,7 @@ from app.models import TaskCategory, Book, Profile, User, Chapter, Task, Languag
 from app.interfaces import Task_Management, Task_Register, Response
 from database.db import db
 from sqlalchemy import func
-import datetime
+import datetime, calendar
 from collections import defaultdict
 
 
@@ -84,44 +84,41 @@ def register_task_service(task_id, user_id):
     db.session.commit()
     return code
 
-#Get all tasks
-def get_total_task():
+def count_total_task():
     total_task = Task.query.count()
     return total_task
 
-#Get all tasks completed
-def get_completed_task():
+def count_completed_task():
     completed_task = Task.query.filter(Task.is_completed == True).count()
     return completed_task
 
-#Get all task uncompleted
-def get_uncompleted_task():
+def count_uncompleted_task():
     uncompleted_task = Task.query.filter(Task.is_completed == False).count()
     return uncompleted_task
 
-#Check day available
-def check_day(month: int, year: int):
+def get_days_in_month(month: int, year: int):
+    if not isinstance(month, int) or not isinstance(year, int):
+        raise ValueError("Month and Year must be integers")
+    if year < 1:
+        raise ValueError("Year must be a positive integer")
+
+    if month > 12:
+        month = 1
+        year += 1
+
     if month < 1:
         month = 12
         year -= 1
-        
-    start_of_month = datetime.datetime(year, month, 1)
-    if month == 12:
-        end_of_month = datetime.datetime(year + 1, 1, 1) - datetime.timedelta(seconds=1)
-    else:
-        end_of_month = datetime.datetime(year, month + 1, 1) - datetime.timedelta(seconds=1)
 
-    all_days = [
-        (start_of_month + datetime.timedelta(days=i)).date()
-        for i in range((end_of_month - start_of_month).days + 1)
-    ]
+    first_day, last_day = calendar.monthrange(year, month)
+    start_of_month = datetime.date(year, month, 1)
+    end_of_month = datetime.date(year, month, last_day)
+    all_days = [start_of_month + datetime.timedelta(days=i) for i in range(last_day)]
 
     return start_of_month, end_of_month, all_days
 
-
-#count task per day in a month
-def count_task_per_day(month: int, year: int):
-    start_of_month, end_of_month, all_days = check_day(month, year)
+def get_task_per_day(month: int, year: int):
+    start_of_month, end_of_month, all_days = get_days_in_month(month, year)
     tasks_per_day = (
         Task.query
         .filter(Task.created_at >= start_of_month, Task.created_at <= end_of_month)
@@ -143,11 +140,9 @@ def count_task_per_day(month: int, year: int):
 
     return result
 
-
-#Get revenue per day in a month
 def get_task_per_month(month: int, year: int):
 
-    start_of_month, end_of_month, all_days = check_day(month, year)
+    start_of_month, end_of_month, all_days = get_days_in_month(month, year)
 
     tasks_per_day = (
         Task.query
@@ -166,11 +161,8 @@ def get_task_per_month(month: int, year: int):
 
     return result
 
-
-#count all task in a month
 def count_task_summary(month: int, year: int):
-    task_per_day_data = count_task_per_day(month, year)
-    
+    task_per_day_data = get_task_per_day(month, year)
     total_completed = 0
     total_uncompleted = 0
     

@@ -5,13 +5,13 @@ from app.interfaces import Response
 import datetime
 from app.services.task import (
     get_tasks,
-    get_total_task,
+    count_total_task,
     get_register_tasks_service,
     register_task_service,
-    get_completed_task,
-    get_uncompleted_task,
+    count_completed_task,
+    count_uncompleted_task,
     get_task_per_month,
-    count_task_per_day,
+    get_task_per_day,
     count_task_summary,
     get_tasks_to_table
 )
@@ -25,7 +25,6 @@ def get_tasks_controllers(key="", deadline=None, task_category_id=None):
         deadline = deadline.strftime("%Y-%m-%d %H:%M:%S")
     tasks = get_tasks(key, deadline, task_category_id)
     return tasks
-
 
 def get_register_tasks_controller():
     key = request.args.get("key", "")
@@ -53,11 +52,11 @@ def get_task_summary_controllers():
     current_month = now.month
     current_year = now.year
 
-    total_task = get_total_task()
-    completed_task = get_completed_task()
-    uncompleted_task = get_uncompleted_task()
+    total_task = count_total_task()
+    completed_task = count_completed_task()
+    uncompleted_task = count_uncompleted_task()
 
-    tasks_per_day = count_task_per_day(current_month, current_year)
+    tasks_per_day = get_task_per_day(current_month, current_year)
     tasks_per_day_current_month = get_task_per_month(current_month, current_year)
     tasks_per_day_last_month = get_task_per_month(current_month - 1, current_year)
     count_task_in_month = count_task_summary(current_month, current_year)
