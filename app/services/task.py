@@ -32,7 +32,6 @@ def get_tasks(key, deadline, task_category_id):
     return tasks
 
 
-# get tasks for register task
 def get_register_tasks_service(key, type, language):
     tasks = Task.query.join(Chapter, Task.chapter_id == Chapter.chapter_id).join(
         Book, Book.book_id == Chapter.book_id
@@ -54,8 +53,6 @@ def get_register_tasks_service(key, type, language):
     return tasks
 
 
-# member register task
-# code 1:success, 0: not found or registered, 2: over limit task
 def register_task_service(task_id, user_id):
     code = 1
     task = Task.query.get(task_id)
