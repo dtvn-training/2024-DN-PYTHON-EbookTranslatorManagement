@@ -1,4 +1,4 @@
-from app.services.chapter import get_content_service, edit_chapter_service, delete_chapter_service
+from app.services.chapter import get_content_service, edit_chapter_service, delete_chapter_and_task
 from flask import request
 from app.interfaces import Status, Response
 from utils.content_file_type import allow_extension
@@ -62,9 +62,12 @@ def delete_chapter_controller(chapter_id):
         return Response.create(False, "Chapter_id is required", None)
     if not str(chapter_id).isdigit():
         return Response.create(False, "Invalid chapter_id", None)
-    is_success, status = delete_chapter_service(chapter_id)
+    chapter_id = int(chapter_id)
+    is_success, status = delete_chapter_and_task(chapter_id)
     if is_success:
         return Response.create(True, "Delete chapter success", None)
     if status == Status.NOTFOUND:
         return Response.create(False, "Chapter not found", None)
+    if status == Status.CONFLICT:
+        return Response.create(False, "Chapter is still being translated", None)
     return Response.create(False, "Delete chapter failed", None)

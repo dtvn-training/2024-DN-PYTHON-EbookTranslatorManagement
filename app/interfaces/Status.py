@@ -3,3 +3,4 @@ class Status:
     ERROR = 3
     DISALLOW = 2
     NOTFOUND = 4
+    CONFLICT = 5

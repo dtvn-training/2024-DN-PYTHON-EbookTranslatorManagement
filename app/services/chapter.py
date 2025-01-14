@@ -1,7 +1,9 @@
-from app.models import Chapter
+from app.models import Chapter, Task
 from utils.limitContent import limit_content
-from app.interfaces import Status
+from app.interfaces import Status, Task_Category
 from database.db import db
+from sqlalchemy import or_
+from utils.retry_decorator import retry_function_decorator
 
 
 class Content:
@@ -53,14 +55,31 @@ def edit_chapter_service(chapter_id, chapter_title, chapter_content, filename, c
         return None, Status.ERROR
 
 
-def delete_chapter_service(chapter_id):
+@retry_function_decorator(retries=2, timeout=2)
+def delete_chapter_and_task(chapter_id):
     try:
-        chapter = Chapter.query.filter(
-            Chapter.chapter_id == chapter_id).first()
-        if not chapter:
-            return None, Status.NOTFOUND
-        db.session.delete(chapter)
-        db.session.commit()
+        if has_conflicting_tasks(chapter_id):
+            return None, Status.CONFLICT
+        with db.session.begin():
+            task = Task.query.filter(Task.chapter_id == chapter_id).first()
+            if task:
+                db.session.delete(task)
+            chapter = Chapter.query.filter(
+                Chapter.chapter_id == chapter_id).first()
+            if not chapter:
+                return None, Status.NOTFOUND
+            db.session.delete(chapter)
+
         return True, Status.SUCCESS
     except:
+        db.session.rollback()
         return None, Status.ERROR
+
+
+def has_conflicting_tasks(chapter_id):
+    is_task = Task.query.filter(
+        Task.chapter_id == chapter_id, or_(Task.is_completed == True, Task.user_id != None, Task.task_category_id != Task_Category.TRANSLATION)).count()
+    # neu task dang o trang thai translation va chua co nguoi nao nhan thi cho phep xoa
+    if is_task > 0:
+        return True
+    return False
