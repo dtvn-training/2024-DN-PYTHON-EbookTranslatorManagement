@@ -36,7 +36,6 @@ def get_tasks(key, deadline, task_category_id):
 
 
 def get_register_tasks_service(key, type, language):
-    """get tasks for register task"""
     tasks = Task.query.join(Chapter, Task.chapter_id == Chapter.chapter_id).join(
         Book, Book.book_id == Chapter.book_id
     ).join(

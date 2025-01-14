@@ -74,7 +74,6 @@ def progress_tracking_detail_service(book_id):
 
 
 def group_chapter_by_id(data):
-    """Nhóm các bản ghi trong danh sách dữ liệu theo `chapter_id`."""
     result = {}
 
     for item in data:
@@ -94,7 +93,6 @@ def group_chapter_by_id(data):
 
 
 def group_books_by_id(data, chapters):
-    """gop cac record co chung book_id"""
     result = defaultdict(
         lambda: {"book_id": "", "book_title": "", "language": "", "chapter": []})
     for item in data:
