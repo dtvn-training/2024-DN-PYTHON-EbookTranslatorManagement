@@ -3,6 +3,7 @@ from utils.limitContent import limit_content
 from app.interfaces import Status, Task_Category
 from database.db import db
 from sqlalchemy import or_
+from utils.retry_decorator import retry_function_decorator
 
 
 class Content:
@@ -54,6 +55,7 @@ def edit_chapter_service(chapter_id, chapter_title, chapter_content, filename, c
         return None, Status.ERROR
 
 
+@retry_function_decorator(retries=2, timeout=2)
 def delete_chapter_and_task(chapter_id):
     try:
         if has_conflicting_tasks(chapter_id):

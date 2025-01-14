@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify, send_from_directory
+from flask import Blueprint, jsonify
 from app.controllers.chapter import get_content_controller, edit_chapter_controller, delete_chapter_controller
 
 chapters = Blueprint("chapters", __name__, url_prefix="/api/chapter")
