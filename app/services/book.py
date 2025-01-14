@@ -21,8 +21,7 @@ def progress_tracking_service(offset, limit, key, language_id):
         chapters = [ChapterProgress.create(chapter) for chapter in chapters]
         progress = group_books_by_id(progress, chapters)
         return progress, total_record
-    except Exception as e:
-        print(e)
+    except Exception:
         return None, None
 
 
@@ -74,23 +73,28 @@ def progress_tracking_detail_service(book_id):
         return None
 
 
-# gop cac record trung chapter_id
 def group_chapter_by_id(data):
+    """Nhóm các bản ghi trong danh sách dữ liệu theo `chapter_id`."""
     result = {}
+
     for item in data:
         chapter_id = item["chapter_id"]
+        # Kiểm tra xem chapter_id đã tồn tại trong result chưa
         if not result.get(chapter_id):
             result[chapter_id] = item
             continue
+        # Bỏ qua nếu thiếu `filename` trong bất kỳ bản ghi nào
         if not all([item["filename"], result[chapter_id]["filename"]]):
             continue
+        # Cập nhật bản ghi nếu thời điểm tạo `created_at` mới hơn
         if result[chapter_id]["created_at"] < item["created_at"]:
             result[chapter_id] = item
+    # Trả về danh sách các bản ghi đã được nhóm
     return list(result.values())
 
 
-# gop cac record co chung book_id
 def group_books_by_id(data, chapters):
+    """gop cac record co chung book_id"""
     result = defaultdict(
         lambda: {"book_id": "", "book_title": "", "language": "", "chapter": []})
     for item in data:
