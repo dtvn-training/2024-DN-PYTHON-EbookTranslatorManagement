@@ -56,11 +56,7 @@ def edit_chapter_service(chapter_id, chapter_title, chapter_content, filename, c
 
 def delete_chapter_service(chapter_id):
     try:
-        chapter_id = int(chapter_id)
-        is_task = Task.query.filter(
-            Task.chapter_id == chapter_id, or_(Task.is_completed == True, Task.user_id != None, Task.task_category_id != Task_Category.TRANSLATION)).count()
-        # neu task dang o trang thai translation va chua co nguoi nao nhan thi cho phep xoa
-        if is_task > 0:
+        if has_conflicting_tasks(chapter_id):
             return None, Status.CONFLICT
         task = Task.query.filter(Task.chapter_id == chapter_id).first()
         # kiem tra xem co task nao duoc tao tu chapter nay chua
@@ -75,3 +71,12 @@ def delete_chapter_service(chapter_id):
         return True, Status.SUCCESS
     except Exception:
         return None, Status.ERROR
+
+
+def has_conflicting_tasks(chapter_id):
+    is_task = Task.query.filter(
+        Task.chapter_id == chapter_id, or_(Task.is_completed == True, Task.user_id != None, Task.task_category_id != Task_Category.TRANSLATION)).count()
+    # neu task dang o trang thai translation va chua co nguoi nao nhan thi cho phep xoa
+    if is_task > 0:
+        return True
+    return False
