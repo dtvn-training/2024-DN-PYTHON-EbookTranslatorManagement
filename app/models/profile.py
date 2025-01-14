@@ -5,14 +5,14 @@ class Profile(db.Model):
     __tablename__ = 'profile'
 
     profile_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    fullname = db.Column(db.String(100), nullable=False)
-    email = db.Column(db.String(100), nullable=False, unique=True)
+    fullname = db.Column(db.String(100),default='Chưa có tên')
+    email = db.Column(db.String(100), nullable=True, unique=True)
     phone = db.Column(db.String(50))
     point = db.Column(db.Integer, default=0)
     level_id = db.Column(db.Integer, db.ForeignKey('level.level_id'))
     task_quantity = db.Column(db.Integer, default=0)
 
-    def __init__(self, fullname, email, phone=None, point=0, level_id=None,task_quantity=0):
+    def __init__(self, email=None, fullname="Chưa có tên", phone=None, point=0, level_id=None,task_quantity=0):
         self.fullname = fullname
         self.email = email
         self.phone = phone

@@ -1,5 +1,5 @@
 from database.db import db
-from app.models import User
+from app.models import User, Profile
 from utils.hashPassword import check_password
 from flask_jwt_extended import create_access_token, create_refresh_token
 from datetime import timedelta
@@ -8,16 +8,18 @@ from app.interfaces import Status
 
 def register_service(username, password):
     try:
-        is_exists = User.query.filter(User.username == username).first()
-        if is_exists:
-            return None, Status.DISALLOW
-        user = User(username=username, user_password=password)
-        db.session.add(user)
-        db.session.commit()
+        with db.session.begin():
+            is_exists = User.query.filter(User.username == username).first()
+            if is_exists:
+                return None, Status.DISALLOW
+            profile = Profile()
+            user = User(username=username, user_password=password, profile_id=profile.profile_id)
+            db.session.add(profile)
+            db.session.add(user)
         return user, Status.SUCCESS
     except:
+        db.session.rollback()  
         return None, Status.ERROR
-
 
 def login_service(username, password):
     try:

@@ -7,7 +7,6 @@ from app.services.user import register_service, login_service
 from app.interfaces import Status
 
 
-# tu dong tao jwt
 def auto_authen_controller():
     user = {
         "username": "john_doe",
