@@ -54,22 +54,23 @@ def edit_chapter_service(chapter_id, chapter_title, chapter_content, filename, c
         return None, Status.ERROR
 
 
-def delete_chapter_service(chapter_id):
+def delete_chapter_and_task(chapter_id):
     try:
         if has_conflicting_tasks(chapter_id):
             return None, Status.CONFLICT
-        task = Task.query.filter(Task.chapter_id == chapter_id).first()
-        # kiem tra xem co task nao duoc tao tu chapter nay chua
-        if task:
-            db.session.delete(task)
-        chapter = Chapter.query.filter(
-            Chapter.chapter_id == chapter_id).first()
-        if not chapter:
-            return None, Status.NOTFOUND
-        db.session.delete(chapter)
-        db.session.commit()
+        with db.session.begin():
+            task = Task.query.filter(Task.chapter_id == chapter_id).first()
+            if task:
+                db.session.delete(task)
+            chapter = Chapter.query.filter(
+                Chapter.chapter_id == chapter_id).first()
+            if not chapter:
+                return None, Status.NOTFOUND
+            db.session.delete(chapter)
+
         return True, Status.SUCCESS
-    except Exception:
+    except:
+        db.session.rollback()
         return None, Status.ERROR
 
 
