@@ -1,8 +1,8 @@
 from flask_jwt_extended import create_access_token
 
 
-# tu dong tao jwt
 def auto_authen_controller():
+    """tu dong tao jwt"""
     user = {
         "username": "john_doe",
         "user_id": 5
