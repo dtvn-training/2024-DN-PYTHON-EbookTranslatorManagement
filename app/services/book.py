@@ -122,3 +122,5 @@ def get_count_by_book_id(book_id, chapters):
     for chapter in chapters:
         if chapter["book_id"] == book_id:
             return chapter["count"]
+        
+

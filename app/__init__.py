@@ -14,7 +14,7 @@ def register_blueprints(app):
 def register_blueprints(app):
     app.register_blueprint(books)
     app.register_blueprint(chapters)
-    app.register_blueprint(tasks)
+    app.register_blueprint(task)
 
 def create_app():
     app = Flask(__name__, static_url_path="/static")

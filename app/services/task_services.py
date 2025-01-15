@@ -16,5 +16,3 @@ def create_task(chapter_id, deadline, salary, task_category_id=1):
     except Exception as e:
         db.session.rollback()
         return None
-
-
