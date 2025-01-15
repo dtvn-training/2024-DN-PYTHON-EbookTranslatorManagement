@@ -1,8 +1,9 @@
-from app.models import Content, Task, Chapter, TaskCategory, KPI
+from app.models import Content, Task, Chapter, TaskCategory, KPI, MyTask
 from database.db import db
 from app.interfaces import Content as ContentInterface, Status
 from utils.enumTaskCategory import task_category_name
 from utils.difference_word import difference_word
+from utils.status_my_task import StatusMyTask
 
 
 def get_content_service(task_id):
@@ -36,22 +37,29 @@ def get_content_service(task_id):
 
 def upload_content_service(task_id, content, user_id, status=False, filename=None):
     try:
-        if not is_user_allowed_for_task(task_id, user_id):
-            return False, Status.DISALLOW
+        with db.session.begin():
+            if not is_user_allowed_for_task(task_id, user_id):
+                return False, Status.DISALLOW
 
-        if status:
-            result = update_task_state(task_id, user_id, content)
-            if result is None:
+            my_task = MyTask.query.filter(
+                MyTask.user_id == user_id, MyTask.task_id == task_id).first()
+            if not my_task:
                 return None, Status.NOTFOUND
-            if result.get('kpi'):
-                db.session.add(result['kpi'])
-        new_content = Content(content, task_id, status, filename)
-        db.session.add(new_content)
-        db.session.commit()
-
+            if status:
+                result = update_task_state(task_id, user_id, content)
+                my_task.status_task_id = StatusMyTask.DONE
+                if result is None:
+                    return None, Status.NOTFOUND
+                if result.get('kpi'):
+                    db.session.add(result['kpi'])
+            else:
+                my_task.status_task_id = StatusMyTask.IN_PROGRESS
+            new_content = Content(content, task_id, status, filename)
+            db.session.add(new_content)
+            db.session.commit()
         return new_content.to_dict(), Status.SUCCESS
-
-    except:
+    except Exception:
+        db.session.rollback()
         return False, Status.ERROR
 
 
