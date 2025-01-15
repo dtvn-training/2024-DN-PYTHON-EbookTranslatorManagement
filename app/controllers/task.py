@@ -86,7 +86,18 @@ def get_information_task_controller(task_id):
 def get_my_task_controller():
     user = get_jwt_identity()
     user_id = user["user_id"]
-    tasks, code = get_my_task_service(user_id)
+    key = request.args.get("key", "")
+    language_id = request.args.get("language_id", "")
+    status_id = request.args.get("status_id", "")
+    category_id = request.args.get("category_id", "")
+    if str(language_id).isdigit():
+        language_id = int(language_id)
+    if str(status_id).isdigit():
+        status_id = int(status_id)
+    if str(category_id).isdigit():
+        category_id = int(category_id)
+    tasks, code = get_my_task_service(user_id, key, language_id,
+                                      status_id, category_id)
     if tasks:
         return Response.create(True, "Success to get my tasks", tasks)
     if code == Status.NOTFOUND:

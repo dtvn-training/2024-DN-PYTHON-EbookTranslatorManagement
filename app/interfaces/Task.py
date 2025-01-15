@@ -93,9 +93,11 @@ class Task_Content(Task):
 
 
 class MyTask(Task):
-    def __init__(self, task_id, chapter_title, deadline, type, language, salary):
+    def __init__(self, task_id, chapter_title, deadline, type, language, salary, status_task_id, status_task_title):
         super().__init__(task_id, chapter_title, deadline, type, language)
         self.salary = salary
+        self.status_task_id = status_task_id
+        self.status_task_title = status_task_title
 
     def to_dict(self):
         return {
@@ -104,13 +106,15 @@ class MyTask(Task):
             "deadline": self.deadline,
             "type": self.type,
             "language": self.language,
-            "salary": self.salary
+            "salary": self.salary,
+            "status_task_id": self.status_task_id,
+            "status_task_title": self.status_task_title
         }
 
     @classmethod
     def create(cls, task):
         task_dict = cls(
-            task[0], task[1], task[2], task[3], task[4], task[5]).to_dict()
+            task[0], task[1], task[2], task[3], task[4], task[5], task[6], task[7]).to_dict()
         return task_dict
 
 
