@@ -15,8 +15,5 @@ def download(file_name):
 
 @downloads.route("/show/<file_name>", methods=["GET"])
 def show_image(file_name):
-    try:
-        file_path = os.path.join(STATIC_FOLDER, file_name)
-        return send_file(file_path)
-    except FileNotFoundError:
-        return "File not found", 404
+    file_path = os.path.join(STATIC_FOLDER, file_name)
+    return send_file(file_path)

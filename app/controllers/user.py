@@ -16,41 +16,37 @@ def auto_authen_controller():
 
 
 def register_controller():
-    try:
-        res_json = request.get_json()
-        username = res_json.get('username', "")
-        password = res_json.get("password", "")
-        confirm_password = res_json.get("confirm_password", "")
-        if not username or not password:
-            return Response.create(False, "Invalid username or password", None)
-        if password != confirm_password:
-            return Response.create(False, "Passwords do not match", None)
-        if not is_valid_password(password):
-            return Response.create(False, "Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one number, and one special character", None)
-        password = hash_password(password)
-        register, status = register_service(username, password)
-        if register:
-            return Response.create(True, "Register successfully", None)
-        if status == Status.ERROR:
-            return Response.create(False, "Fail to register", None)
-        return Response.create(False, "Username already exists", None)
-    except:
+
+    res_json = request.get_json()
+    username = res_json.get('username', "")
+    password = res_json.get("password", "")
+    confirm_password = res_json.get("confirm_password", "")
+    if not username or not password:
+        return Response.create(False, "Invalid username or password", None)
+    if password != confirm_password:
+        return Response.create(False, "Passwords do not match", None)
+    if not is_valid_password(password):
+        return Response.create(False, "Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one number, and one special character", None)
+    password = hash_password(password)
+    register, status = register_service(username, password)
+    if register:
+        return Response.create(True, "Register successfully", None)
+    if status == Status.ERROR:
         return Response.create(False, "Fail to register", None)
+    return Response.create(False, "Username already exists", None)
 
 
 def login_controller():
-    try:
-        res_json = request.get_json()
-        username = res_json.get('username', "")
-        password = res_json.get("password", "")
-        if not username or not password:
-            return Response.create(False, "Invalid username or password", None)
-        user = login_service(username, password)
-        if user:
-            return Response.create(True, "Login successfully", user)
+
+    res_json = request.get_json()
+    username = res_json.get('username', "")
+    password = res_json.get("password", "")
+    if not username or not password:
         return Response.create(False, "Invalid username or password", None)
-    except:
-        return Response.create(False, "Fail to login", None)
+    user = login_service(username, password)
+    if user:
+        return Response.create(True, "Login successfully", user)
+    return Response.create(False, "Invalid username or password", None)
 
 
 def edit_profile_controller():

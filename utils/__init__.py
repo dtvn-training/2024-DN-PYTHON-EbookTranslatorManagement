@@ -4,3 +4,4 @@ from .random_file_name import random_file_name
 from .secret import UPLOAD_FOLDER, SECRET_KEY_JWT, db_url
 from .hashPassword import check_password, hash_password
 from .isValidPassword import is_valid_password
+from .error_handler import error_handler

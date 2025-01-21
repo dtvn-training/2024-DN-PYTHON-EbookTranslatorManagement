@@ -5,6 +5,7 @@ from app.views import taskCategory, task, language, chapters, downloads, users, 
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager
 import os
+from utils import error_handler
 
 
 def create_app():
@@ -24,6 +25,7 @@ def create_app():
     app.register_blueprint(downloads)
     app.register_blueprint(users)
     app.register_blueprint(books)
+    app.register_error_handler(Exception, error_handler)
     with app.app_context():
         from .models import Level, Task, Chapter, User, TaskCategory, Book, Comment, Content, Notification, Profile, Role, KPI, UserNotification
         db.create_all()
